@@ -1,0 +1,686 @@
+[
+ {
+  "id": 1,
+  "cat": "clinic",
+  "name": "For Asthma",
+  "desc": "Relief in Asthma Problem",
+  "price": 3500,
+  "img": "https://i.ibb.co/C3jgsv80/asthama.png",
+  "nameUr": "دمہ کے لیے",
+  "descUr": "دمہ کی تکلیف میں آرام"
+ },
+ {
+  "id": 2,
+  "cat": "clinic",
+  "name": "For Bladder Stone",
+  "desc": "Remove pain from Bladder and Stone",
+  "price": 3500,
+  "img": "https://i.ibb.co/rGwbtD3t/bladdar-stone.png",
+  "nameUr": "مثانے کی پتھری کے لیے",
+  "descUr": "مثانے اور پتھری کا درد دور کرے"
+ },
+ {
+  "id": 3,
+  "cat": "clinic",
+  "name": "For Both Sides Stones",
+  "desc": "Effective stone removal formula",
+  "price": 3500,
+  "img": "https://i.ibb.co/Dgfrm6mD/both-sides.png",
+  "nameUr": "دونوں طرف کی پتھری کے لیے",
+  "descUr": "پتھری خارج کرنے کا مؤثر فارمولا"
+ },
+ {
+  "id": 7,
+  "cat": "clinic",
+  "name": "For Constipation",
+  "desc": "Digestive health & constipation relief",
+  "price": 3500,
+  "img": "https://i.ibb.co/Q3cYvVL5/costipation.png",
+  "nameUr": "قبض کے لیے",
+  "descUr": "نظامِ ہضم کی صحت اور قبض سے نجات"
+ },
+ {
+  "id": 17,
+  "cat": "clinic",
+  "name": "For Cough",
+  "desc": "Relief in Cough and Respiratory Issues",
+  "price": 3500,
+  "img": "https://i.ibb.co/wrz968FF/cough.png",
+  "nameUr": "کھانسی کے لیے",
+  "descUr": "کھانسی اور سانس کی تکالیف میں آرام"
+ },
+ {
+  "id": 18,
+  "cat": "clinic",
+  "name": "For Dust Allergy",
+  "desc": "Relief from Dust Allergy Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/nqQChFfg/dust-allergy.png",
+  "nameUr": "گرد کی الرجی کے لیے",
+  "descUr": "گرد کی الرجی کی علامات میں آرام"
+ },
+ {
+  "id": 19,
+  "cat": "clinic",
+  "name": "For Fatty Liver",
+  "desc": "Support for Liver Health",
+  "price": 3500,
+  "img": "https://i.ibb.co/jvdwHMV3/fatty-liver.png",
+  "nameUr": "فیٹی لیور کے لیے",
+  "descUr": "جگر کی صحت کے لیے معاون"
+ },
+ {
+  "id": 20,
+  "cat": "clinic",
+  "name": "For Bed Waiting",
+  "desc": "For patients who are bed ridden and need recovery support",
+  "price": 3500,
+  "img": "https://i.ibb.co/ch0ChVZT/for-bed.png",
+  "nameUr": "بستر پر پڑے مریض کے لیے",
+  "descUr": "بستر پر پڑے مریضوں کے لیے، صحت یابی میں معاون"
+ },
+ {
+  "id": 21,
+  "cat": "clinic",
+  "name": "For Kidney Infection",
+  "desc": "Relief from Kidney Infection Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/Y7ThXvZd/for-infection.png",
+  "nameUr": "گردے کے انفیکشن کے لیے",
+  "descUr": "گردے کے انفیکشن کی علامات میں آرام"
+ },
+ {
+  "id": 22,
+  "cat": "clinic",
+  "name": "For Gall Stone",
+  "desc": "Relief from Gall Stone Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/JWHxQxhy/gall-stone.png",
+  "nameUr": "پتے کی پتھری کے لیے",
+  "descUr": "پتے کی پتھری کی علامات میں آرام"
+ },
+ {
+  "id": 23,
+  "cat": "clinic",
+  "name": "For Left Side Stone",
+  "desc": "Relief from Left Side Stone Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/Y4JppMG6/left-side.png",
+  "nameUr": "بائیں طرف کی پتھری کے لیے",
+  "descUr": "بائیں طرف کی پتھری کی علامات میں آرام"
+ },
+ {
+  "id": 24,
+  "cat": "clinic",
+  "name": "For Migraine",
+  "desc": "Relief from Migraine Headache Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/v4BchTSK/migrane.png",
+  "nameUr": "مائیگرین (آدھے سر کا درد) کے لیے",
+  "descUr": "مائیگرین (آدھے سر کا درد) کی علامات میں آرام"
+ },
+ {
+  "id": 25,
+  "cat": "clinic",
+  "name": "For Nose Bleeding",
+  "desc": "Relief from Nose Bleeding Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/27MqQRyb/nose.png",
+  "nameUr": "نکسیر کے لیے",
+  "descUr": "نکسیر کی علامات میں آرام"
+ },
+ {
+  "id": 26,
+  "cat": "clinic",
+  "name": "For Piles",
+  "desc": "Relief from Piles Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/4nt8Q23X/piles.png",
+  "nameUr": "بواسیر کے لیے",
+  "descUr": "بواسیر کی علامات میں آرام"
+ },
+ {
+  "id": 27,
+  "cat": "clinic",
+  "name": "For Right Side Stone",
+  "desc": "Relief from Right Side Stone Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/MkW3r0dP/right-side.png",
+  "nameUr": "دائیں طرف کی پتھری کے لیے",
+  "descUr": "دائیں طرف کی پتھری کی علامات میں آرام"
+ },
+ {
+  "id": 28,
+  "cat": "clinic",
+  "name": "For Men's Diseases",
+  "desc": "Support for Men's Health Issues",
+  "price": 3500,
+  "img": "https://i.ibb.co/nsHSwksX/men-s-diseases.png",
+  "nameUr": "مردانہ امراض کے لیے",
+  "descUr": "مردانہ صحت کے مسائل میں معاون"
+ },
+ {
+  "id": 29,
+  "cat": "clinic",
+  "name": "For Sense Intelligence",
+  "desc": "Support for Cognitive Function and Mental Clarity",
+  "price": 3500,
+  "img": "https://i.ibb.co/xSmnb888/sense-intelligence.png",
+  "nameUr": "ذہانت اور حواس کے لیے",
+  "descUr": "ذہنی صلاحیت اور یکسوئی کے لیے معاون"
+ },
+ {
+  "id": 30,
+  "cat": "clinic",
+  "name": "For Gonorrhea",
+  "desc": "Relief from Gonorrhea Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/RGrXPv0b/Gonorrhea.png",
+  "nameUr": "سوزاک کے لیے",
+  "descUr": "سوزاک کی علامات میں آرام"
+ },
+ {
+  "id": 31,
+  "cat": "clinic",
+  "name": "For Leucorrhea",
+  "desc": "Relief from Leucorrhea Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/4g5r76q0/Leucorrhea.png",
+  "nameUr": "لیکوریا کے لیے",
+  "descUr": "لیکوریا کی علامات میں آرام"
+ },
+ {
+  "id": 32,
+  "cat": "clinic",
+  "name": "For Eye Injury",
+  "desc": "Relief from Eye Injury Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/cSttRHbT/Eye-Injuy.png",
+  "nameUr": "آنکھ کی چوٹ کے لیے",
+  "descUr": "آنکھ کی چوٹ کی علامات میں آرام"
+ },
+ {
+  "id": 33,
+  "cat": "clinic",
+  "name": "For Bloody Twist",
+  "desc": "Relief from Bloody Twist Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/ymHsLqdP/bloody-twist.png",
+  "nameUr": "خونی مروڑ کے لیے",
+  "descUr": "خونی مروڑ کی علامات میں آرام"
+ },
+ {
+  "id": 34,
+  "cat": "clinic",
+  "name": "For Nasal Bone Enlargement",
+  "desc": "Relief from Nasal Bone Enlargement Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/jkpxrZYG/nasal-bone.png",
+  "nameUr": "ناک کی ہڈی بڑھنے کے لیے",
+  "descUr": "ناک کی ہڈی بڑھنے کی علامات میں آرام"
+ },
+ {
+  "id": 35,
+  "cat": "clinic",
+  "name": "For Old Dysentery",
+  "desc": "Relief from Old Dysentery Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/4R2FF6cb/Old-dysentery.png",
+  "nameUr": "پرانی پیچش کے لیے",
+  "descUr": "پرانی پیچش کی علامات میں آرام"
+ },
+ {
+  "id": 36,
+  "cat": "clinic",
+  "name": "For Bleeding from the Gums",
+  "desc": "Relief from Bleeding Gums Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/x8jBMsfP/bleeding-from-the-gums.png",
+  "nameUr": "مسوڑھوں سے خون آنے کے لیے",
+  "descUr": "مسوڑھوں سے خون آنے کی علامات میں آرام"
+ },
+ {
+  "id": 37,
+  "cat": "clinic",
+  "name": "For Emergency Drops",
+  "desc": "Emergency relief formula",
+  "price": 3500,
+  "img": "https://i.ibb.co/KpkDqW41/emergency-drops.png",
+  "nameUr": "ایمرجنسی ڈراپس",
+  "descUr": "ہنگامی آرام کا فارمولا"
+ },
+ {
+  "id": 38,
+  "cat": "clinic",
+  "name": "For Lakwa",
+  "desc": "Relief from Lakwa Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/N2240jFX/Lakwa.png",
+  "nameUr": "لقوہ کے لیے",
+  "descUr": "لقوہ کی علامات میں آرام"
+ },
+ {
+  "id": 39,
+  "cat": "clinic",
+  "name": "For Stroke",
+  "desc": "Relief from Stroke Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/q3JxM2Ss/stroke.png",
+  "nameUr": "فالج کے لیے",
+  "descUr": "فالج کی علامات میں آرام"
+ },
+ {
+  "id": 40,
+  "cat": "clinic",
+  "name": "For Sore Throat",
+  "desc": "Relief from Sore Throat Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/jkdCdSCv/Sore-throat.png",
+  "nameUr": "گلے کی خراش کے لیے",
+  "descUr": "گلے کی خراش کی علامات میں آرام"
+ },
+ {
+  "id": 41,
+  "cat": "clinic",
+  "name": "For Heart Disease",
+  "desc": "Relief from Heart Disease Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/ccSS8PqY/For-the-heart.png",
+  "nameUr": "امراضِ قلب کے لیے",
+  "descUr": "امراضِ قلب کی علامات میں آرام"
+ },
+ {
+  "id": 42,
+  "cat": "clinic",
+  "name": "For High Blood Pressure",
+  "desc": "Relief from High Blood Pressure Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/MkSQC86g/High-blood-pressure.png",
+  "nameUr": "ہائی بلڈ پریشر کے لیے",
+  "descUr": "ہائی بلڈ پریشر کی علامات میں آرام"
+ },
+ {
+  "id": 43,
+  "cat": "clinic",
+  "name": "For Low Blood Pressure",
+  "desc": "Relief from Low Blood Pressure Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/cXDZJFfW/low-blood-pressure.png",
+  "nameUr": "لو بلڈ پریشر کے لیے",
+  "descUr": "لو بلڈ پریشر کی علامات میں آرام"
+ },
+ {
+  "id": 44,
+  "cat": "clinic",
+  "name": "For Physical and Male Weakness",
+  "desc": "Relief from Physical and Male Weakness Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/LzmbGXzd/Physical-and-male-weakness.png",
+  "nameUr": "جسمانی اور مردانہ کمزوری کے لیے",
+  "descUr": "جسمانی اور مردانہ کمزوری کی علامات میں آرام"
+ },
+ {
+  "id": 45,
+  "cat": "clinic",
+  "name": "For Navel Pain",
+  "desc": "Relief from Navel Pain Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/RTmtDQM6/for-navel.png",
+  "nameUr": "ناف کے درد کے لیے",
+  "descUr": "ناف کے درد کی علامات میں آرام"
+ },
+ {
+  "id": 46,
+  "cat": "clinic",
+  "name": "For Stomach Pain",
+  "desc": "Relief from Stomach Pain Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/Kp8Bhphp/For-Stomach-Pain.png",
+  "nameUr": "پیٹ کے درد کے لیے",
+  "descUr": "پیٹ کے درد کی علامات میں آرام"
+ },
+ {
+  "id": 47,
+  "cat": "clinic",
+  "name": "For Edema",
+  "desc": "Relief from Edema Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/Lzy3nXRT/edema.png",
+  "nameUr": "ورم (سوجن) کے لیے",
+  "descUr": "ورم (سوجن) کی علامات میں آرام"
+ },
+ {
+  "id": 48,
+  "cat": "clinic",
+  "name": "For Oxygen",
+  "desc": "Oxygen support supplement",
+  "price": 3500,
+  "img": "https://i.ibb.co/278WtbrB/Oxygen.png",
+  "nameUr": "آکسیجن کے لیے",
+  "descUr": "آکسیجن کی کمی میں معاون سپلیمنٹ"
+ },
+ {
+  "id": 49,
+  "cat": "clinic",
+  "name": "For Sleep",
+  "desc": "Natural sleep support formula",
+  "price": 3500,
+  "img": "https://i.ibb.co/W4tPKKcM/Sleep.png",
+  "nameUr": "نیند کے لیے",
+  "descUr": "قدرتی نیند کے لیے معاون فارمولا"
+ },
+ {
+  "id": 50,
+  "cat": "clinic",
+  "name": "For Urea",
+  "desc": "Relief from Urea-related issues",
+  "price": 3500,
+  "img": "https://i.ibb.co/h1yX3Lcc/Urea.png",
+  "nameUr": "یوریا کے لیے",
+  "descUr": "یوریا سے متعلق مسائل میں آرام"
+ },
+ {
+  "id": 51,
+  "cat": "clinic",
+  "name": "For Creatinine",
+  "desc": "Support for Creatinine regulation",
+  "price": 3500,
+  "img": "https://i.ibb.co/RpZ7LDMx/Creatinine.png",
+  "nameUr": "کریٹینن کے لیے",
+  "descUr": "کریٹینن کو متوازن رکھنے میں معاون"
+ },
+ {
+  "id": 52,
+  "cat": "clinic",
+  "name": "For Uric Acid",
+  "desc": "Relief from Uric Acid Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/zypvYHV/Uric-Acid.png",
+  "nameUr": "یورک ایسڈ کے لیے",
+  "descUr": "یورک ایسڈ کی علامات میں آرام"
+ },
+ {
+  "id": 53,
+  "cat": "clinic",
+  "name": "For Cholesterol",
+  "desc": "Cholesterol management formula",
+  "price": 3500,
+  "img": "https://i.ibb.co/hxM0zVQF/Cholestrole.png",
+  "nameUr": "کولیسٹرول کے لیے",
+  "descUr": "کولیسٹرول کو قابو میں رکھنے کا فارمولا"
+ },
+ {
+  "id": 54,
+  "cat": "clinic",
+  "name": "For Children Tremors",
+  "desc": "Relief from Children Tremors Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/KpLBCK0f/Children.png",
+  "nameUr": "بچوں کے رعشے کے لیے",
+  "descUr": "بچوں کے رعشے کی علامات میں آرام"
+ },
+ {
+  "id": 55,
+  "cat": "clinic",
+  "name": "For Tension",
+  "desc": "Relief from Tension Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/TxPWFwLT/Tension.png",
+  "nameUr": "ٹینشن کے لیے",
+  "descUr": "ٹینشن کی علامات میں آرام"
+ },
+ {
+  "id": 56,
+  "cat": "clinic",
+  "name": "For Joint Pain",
+  "desc": "Relief from Joint Pain Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/PvpPbRfh/Joint-Pian.png",
+  "nameUr": "جوڑوں کے درد کے لیے",
+  "descUr": "جوڑوں کے درد کی علامات میں آرام"
+ },
+ {
+  "id": 57,
+  "cat": "clinic",
+  "name": "For Vomiting",
+  "desc": "Relief from Vomiting Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/qFyCR0VP/Vomiting.png",
+  "nameUr": "الٹی (قے) کے لیے",
+  "descUr": "الٹی (قے) کی علامات میں آرام"
+ },
+ {
+  "id": 58,
+  "cat": "clinic",
+  "name": "For Bleeding Piles / Hemorrhoids",
+  "desc": "Relief from Bleeding Piles Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/RGqcWnN3/Bleeding-piles.png",
+  "nameUr": "خونی بواسیر کے لیے",
+  "descUr": "خونی بواسیر کی علامات میں آرام"
+ },
+ {
+  "id": 59,
+  "cat": "clinic",
+  "name": "For External Hemorrhoids",
+  "desc": "Relief from External Hemorrhoids Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/JjwV5X2W/External-Hemorrhoids.png",
+  "nameUr": "بیرونی بواسیر کے لیے",
+  "descUr": "بیرونی بواسیر کی علامات میں آرام"
+ },
+ {
+  "id": 60,
+  "cat": "clinic",
+  "name": "For Diarrhea and Loose Motion",
+  "desc": "Relief from Diarrhea and Loose Motion",
+  "price": 3500,
+  "img": "https://i.ibb.co/DfVLFsx6/loose-motion.png",
+  "nameUr": "اسہال اور پتلے دست کے لیے",
+  "descUr": "اسہال اور پتلے دست میں آرام"
+ },
+ {
+  "id": 61,
+  "cat": "clinic",
+  "name": "For Epidemic Diseases",
+  "desc": "Relief from Epidemic Diseases Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/JwsjQVpr/Epidemic-Diseases.png",
+  "nameUr": "وبائی امراض کے لیے",
+  "descUr": "وبائی امراض کی علامات میں آرام"
+ },
+ {
+  "id": 62,
+  "cat": "clinic",
+  "name": "For Spleen",
+  "desc": "Relief from Spleen Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/sxS3g6F/Spleen.png",
+  "nameUr": "تلی کے لیے",
+  "descUr": "تلی کی علامات میں آرام"
+ },
+ {
+  "id": 63,
+  "cat": "clinic",
+  "name": "For Worms",
+  "desc": "Relief from Worms Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/QF4g9Bxs/Worms.png",
+  "nameUr": "پیٹ کے کیڑوں کے لیے",
+  "descUr": "پیٹ کے کیڑوں کی علامات میں آرام"
+ },
+ {
+  "id": 64,
+  "cat": "clinic",
+  "name": "For Gout",
+  "desc": "Relief from Gout Symptoms",
+  "price": 3500,
+  "img": "https://i.ibb.co/PvpyPxxm/Gout.png",
+  "nameUr": "گاؤٹ (نقرس) کے لیے",
+  "descUr": "گاؤٹ (نقرس) کی علامات میں آرام"
+ },
+ {
+  "id": 65,
+  "cat": "clinic",
+  "name": "Power-X Neuro Drops",
+  "desc": "Nervous system support supplement",
+  "price": 3500,
+  "img": "https://i.ibb.co/gMT9gYwW/Whats-App-Image-2026-03-06-at-6-13-38-PM.jpg",
+  "nameUr": "پاور ایکس نیورو ڈراپس",
+  "descUr": "اعصابی نظام کے لیے معاون سپلیمنٹ"
+ },
+ {
+  "id": 1000,
+  "cat": "clinic",
+  "name": "Special Formula",
+  "desc": "Featured clinic product — naam/detail yahan badal sakte hain",
+  "price": 3500,
+  "img": "https://i.ibb.co/FL6vWP3t/Whats-App-Image-2026-10-21-at-2-46-15-PM.jpg",
+  "nameUr": "اسپیشل فارمولا",
+  "descUr": "نمایاں کلینک پروڈکٹ"
+ },
+ {
+  "id": 4,
+  "cat": "dxn",
+  "name": "Lemonzhi Ganoderma",
+  "desc": "Tea Mix with Lemon and Ganoderma Extract",
+  "price": 2020,
+  "imgs": [
+   "https://i.ibb.co/wFp3KNR0/lemonzhi.jpg"
+  ],
+  "nameUr": "لیمن ژی گینوڈرما",
+  "descUr": "لیموں اور گینوڈرما ایکسٹریکٹ والا چائے مکس"
+ },
+ {
+  "id": 5,
+  "cat": "dxn",
+  "name": "Morinzhi",
+  "desc": "Morinda Citrifolia juice",
+  "price": 4220,
+  "imgs": [
+   "https://i.ibb.co/V0nWDQky/morinzhi-1.png"
+  ],
+  "nameUr": "مورن ژی",
+  "descUr": "مورنڈا سٹریفولیا (نونی) کا جوس"
+ },
+ {
+  "id": 6,
+  "cat": "dxn",
+  "name": "Cocozhi box",
+  "desc": "Cocoa Drink Mix with Ganoderma Extract",
+  "price": 4395,
+  "imgs": [
+   "https://i.ibb.co/Y7mTHXzn/Cocozhi.jpg"
+  ],
+  "nameUr": "کوکو ژی باکس",
+  "descUr": "گینوڈرما ایکسٹریکٹ والا کوکو ڈرنک مکس"
+ },
+ {
+  "id": 8,
+  "cat": "dxn",
+  "name": "Gano massage oil",
+  "desc": "Ganoderma based herbal massage oil for pain relief",
+  "price": 2570,
+  "imgs": [
+   "https://i.ibb.co/27GVq9Kv/Gano-Oil.jpg"
+  ],
+  "nameUr": "گینو مساج آئل",
+  "descUr": "درد سے آرام کے لیے گینوڈرما پر مبنی جڑی بوٹیوں کا مساج آئل"
+ },
+ {
+  "id": 9,
+  "cat": "dxn",
+  "name": "Ganozhi shampoo",
+  "desc": "Ganoderma based herbal shampoo for hair care",
+  "price": 2045,
+  "imgs": [
+   "https://i.ibb.co/RGfHbv2v/ganozhi-shampoo.jpg"
+  ],
+  "nameUr": "گینو ژی شیمپو",
+  "descUr": "بالوں کی نگہداشت کے لیے گینوڈرما پر مبنی ہربل شیمپو"
+ },
+ {
+  "id": 10,
+  "cat": "dxn",
+  "name": "Ganozhi Toothpaste 150g",
+  "desc": "Natural toothpaste enhanced with Ganoderma",
+  "price": 1780,
+  "imgs": [
+   "https://i.ibb.co/vCNGC6YC/Ganozhi-big.jpg"
+  ],
+  "nameUr": "گینو ژی ٹوتھ پیسٹ 150 گرام",
+  "descUr": "گینوڈرما سے بھرپور قدرتی ٹوتھ پیسٹ"
+ },
+ {
+  "id": 11,
+  "cat": "dxn",
+  "name": "Toothpaste Box",
+  "desc": "Ganoderma infused toothpaste box with 40g x 6 tubes",
+  "price": 3240,
+  "imgs": [
+   "https://i.ibb.co/PsZ7pk3L/Ganozhi-mini.jpg"
+  ],
+  "nameUr": "ٹوتھ پیسٹ باکس",
+  "descUr": "گینوڈرما والا ٹوتھ پیسٹ باکس، 40 گرام کی 6 ٹیوبیں"
+ },
+ {
+  "id": 12,
+  "cat": "dxn",
+  "name": "Spirulina 120 tablets",
+  "desc": "Nutritional supplement rich in proteins and vitamins",
+  "price": 3600,
+  "imgs": [
+   "https://i.ibb.co/fz8WP18q/Spirolina.jpg"
+  ],
+  "nameUr": "اسپیرولینا 120 ٹیبلٹس",
+  "descUr": "پروٹین اور وٹامنز سے بھرپور غذائی سپلیمنٹ"
+ },
+ {
+  "id": 13,
+  "cat": "dxn",
+  "name": "Potenzhi 30 capsules",
+  "desc": "Ganoderma infused energy supplement",
+  "price": 4015,
+  "imgs": [
+   "https://i.ibb.co/Hpq8cx4N/potenzhi.jpg.jpg"
+  ],
+  "nameUr": "پوٹن ژی 30 کیپسول",
+  "descUr": "گینوڈرما والا توانائی بخش سپلیمنٹ"
+ },
+ {
+  "id": 14,
+  "cat": "dxn",
+  "name": "Black coffee Box",
+  "desc": "Ganoderma infused black coffee",
+  "price": 2370,
+  "imgs": [
+   "https://i.ibb.co/jkMRxNHd/Black-coffee.jpg"
+  ],
+  "nameUr": "بلیک کافی باکس",
+  "descUr": "گینوڈرما والی بلیک کافی"
+ },
+ {
+  "id": 15,
+  "cat": "dxn",
+  "name": "3 in 1 coffee Box",
+  "desc": "Premix Coffee with Ganoderma extract",
+  "price": 2505,
+  "imgs": [
+   "https://i.ibb.co/m5T2gz08/3-in-1-coffee.jpg"
+  ],
+  "nameUr": "3 ان 1 کافی باکس",
+  "descUr": "گینوڈرما ایکسٹریکٹ والی پری مکس کافی"
+ },
+ {
+  "id": 16,
+  "cat": "dxn",
+  "name": "Roselle 120 Tablets",
+  "desc": "Providing a rich source of Vitamin C and antioxidants",
+  "price": 3220,
+  "imgs": [
+   "https://i.ibb.co/q3Td2zpD/Roselle.jpg"
+  ],
+  "nameUr": "روزیل 120 ٹیبلٹس",
+  "descUr": "وٹامن سی اور اینٹی آکسیڈنٹس کا بھرپور ذریعہ"
+ }
+]

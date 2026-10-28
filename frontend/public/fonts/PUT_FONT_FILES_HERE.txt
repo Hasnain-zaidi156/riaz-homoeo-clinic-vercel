@@ -1,0 +1,3 @@
+Ye folder mein ab font file maujood hai:
+JameelNooriNastaleeq.ttf  -> poori Urdu website ki body (exact yehi naam, bund ho chuki hai)
+Headings Noto Nastaliq Urdu (Google Font) mein hain; JNK file fallback ke tor pe bhi lagi hai.
