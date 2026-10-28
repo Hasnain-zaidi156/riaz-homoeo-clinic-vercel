@@ -13,7 +13,7 @@ const ST=mongoose.model('Setting',S({site:{type:String,default:'site',unique:tru
 const MD=mongoose.model('Media',S({name:String,alt:String,src:String,data:Buffer,contentType:String,size:Number,show:{type:Boolean,default:true},pos:{type:Number,default:0}}));
 const mediaUrl=m=>m.src||'/api/media/'+m._id+'/file';
 const mediaOut=m=>({_id:m._id,name:m.name||'',alt:m.alt||'',url:mediaUrl(m),hosted:!m.src,show:m.show!==false,size:m.size||0,createdAt:m.createdAt});
-const DELIVERY=250,ah=f=>(q,s,n)=>f(q,s,n).catch(e=>s.status(500).json({error:e.message}));
+const DELIVERY=500,ah=f=>(q,s,n)=>f(q,s,n).catch(e=>s.status(500).json({error:e.message}));
 const ok=(v,m=200)=>typeof v==='string'&&v.trim()&&v.length<=m;
 const auth=(q,s,n)=>{try{jwt.verify((q.headers.authorization||'').slice(7),process.env.JWT_SECRET);n()}catch{s.status(401).json({error:'Unauthorized'})}};
 

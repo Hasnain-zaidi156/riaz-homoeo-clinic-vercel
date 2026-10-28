@@ -67,3 +67,9 @@ Optional: UptimeRobot se har 5 minute `https://<render-url>/` ping karwayein to 
 1. **Backend** project: Root Directory = `backend`, Framework = Other. Env vars: `MONGO_URI`, `JWT_SECRET`, `ADMIN_USER`, `ADMIN_PASS`, `CLIENT_URL` (frontend URL, end mein `/` nahi).
 2. **Frontend** project: Root Directory = `frontend`, Framework = Vite. Env var: `VITE_API_BASE` = backend ka Vercel URL (end mein `/` nahi).
 3. Env vars badalne ke baad Redeploy karein. `render.yaml` / `netlify.toml` Vercel par ignore hote hain.
+
+## Latest fixes
+- `frontend/vercel.json`: sab routes `index.html` par (pehle sirf `/product/*` tha, is liye `/admin` 404 deta tha).
+- Speed fix (product page, See More, woff2 font, lazy/eager images) merge ho chuka hai; data cache (stale-while-revalidate) wapas hai.
+- Delivery 500 PKR (`frontend/src/lib/config.js`, `backend/server.js`, `pages/admin/Receipt.jsx`).
+- Admin > Orders: order par click karein => A4 raseed + Print button.

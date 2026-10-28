@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { assetUrl } from '../../lib/config'
 import { Bag, Comment, ImageIcon, Package, Plus, Search, Trash, Eye, EyeOff } from '../../components/Icons'
+import Receipt, { RECEIPT_DELIVERY } from './Receipt'
 import { Badge, Empty, Loading, Switch, money, niceDate, useConfirm, useToast } from './ui'
 
 const ORDER_STATUS = ['new', 'confirmed', 'delivered', 'cancelled']
@@ -80,7 +81,7 @@ export function Overview({ d, go, addImages }) {
 /* ================= Orders ================= */
 export function Orders({ d, api, patch }) {
   const toast = useToast()
-  const [f, setF] = useState('all'), [q, setQ] = useState('')
+  const [f, setF] = useState('all'), [q, setQ] = useState(''), [rc, setRc] = useState(null)
   const rows = d.orders
   const shown = useMemo(() => (rows || []).filter(o => (f === 'all' || o.status === f) &&
     (!q || `${o.name} ${o.phone} ${o.address}`.toLowerCase().includes(q.toLowerCase()))), [rows, f, q])
@@ -98,16 +99,18 @@ export function Orders({ d, api, patch }) {
       </div>
       {shown.length === 0 ? <Empty icon={<Bag size={22} />} title="No orders found" text={rows.length ? 'Try another filter.' : 'Orders placed on the website will appear here.'} /> : (
         <div className="adm-scroll"><table className="adm-table">
-          <thead><tr><th>Date</th><th>Customer</th><th>Items</th><th className="num">Total</th><th>Status</th></tr></thead>
+          <thead><tr><th>Date</th><th>Customer</th><th>Items</th><th className="num">Total</th><th>Status</th><th>Receipt</th></tr></thead>
           <tbody>{shown.map(o => (
-            <tr key={o._id}>
+            <tr key={o._id} className="adm-row-click" onClick={() => setRc(o)} title="Click to view receipt">
               <td className="nowrap">{niceDate(o.createdAt || '')}</td>
-              <td><b>{o.name}</b><small><a href={`tel:${o.phone}`}>{o.phone}</a></small>{o.address && <small>{o.address}</small>}</td>
+              <td><b>{o.name}</b><small><a href={`tel:${o.phone}`} onClick={e => e.stopPropagation()}>{o.phone}</a></small>{o.address && <small>{o.address}</small>}</td>
               <td>{o.items.map((i, k) => <div key={k} className="adm-item-line">{i.name} <span>× {i.qty}</span></div>)}</td>
-              <td className="num nowrap"><b>{money(o.total)}</b></td>
-              <td><StatusSelect value={o.status} options={ORDER_STATUS} onChange={s => setStatus(o, s)} /></td>
+              <td className="num nowrap"><b>{money((o.items || []).reduce((s, i) => s + (i.price || 0) * (i.qty || 1), 0) + RECEIPT_DELIVERY)}</b></td>
+              <td onClick={e => e.stopPropagation()}><StatusSelect value={o.status} options={ORDER_STATUS} onChange={s => setStatus(o, s)} /></td>
+              <td><button type="button" className="adm-btn" onClick={e => { e.stopPropagation(); setRc(o) }}>Receipt</button></td>
             </tr>))}</tbody>
         </table></div>)}
+      {rc && <Receipt order={rc} onClose={() => setRc(null)} />}
     </div>
   )
 }

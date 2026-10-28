@@ -10,7 +10,11 @@ const pinFirst = list => [
   ...list.filter(p => !PIN_FIRST.includes(p.id)),
 ]
 
-/* Server abhi jag raha ho to jaldi jaldi dobara try (koi cache nahi — hamesha taaza data) */
+/* Render free server soya ho to 30-60 sec lagte hain: retry + localStorage cache (pichli dafa ka data foran dikhta hai).
+   Is se admin ki lagayi hui images default photo se pehle flash nahi hoti. */
+const CACHE_KEY = 'rhc_cache_v1'
+const readCache = () => { try { const c = JSON.parse(localStorage.getItem(CACHE_KEY)); return c && Array.isArray(c.products) && c.products.length ? c : null } catch { return null } }
+const writeCache = (products, settings) => { try { localStorage.setItem(CACHE_KEY, JSON.stringify({ products, settings })) } catch { /* ignore */ } }
 const sleep = ms => new Promise(r => setTimeout(r, ms))
 async function getJSON(url, tries = 40, gap = 1500) {
   for (let i = 0; i < tries; i++) {
@@ -35,15 +39,16 @@ const Ctx = createContext(null)
 export const useStore = () => useContext(Ctx)
 
 export function StoreProvider({ children }) {
-  const [products, setProducts] = useState([])
-  const [status, setStatus] = useState('loading') // loading | ready | error
+  const [cache] = useState(readCache)
+  const [products, setProducts] = useState(cache ? cache.products : [])
+  const [status, setStatus] = useState(cache ? 'ready' : 'loading') // loading | ready | error
   const [cart, setCart] = useState([])
   const [cartOpen, setCartOpen] = useState(false)
   const [lightbox, setLightbox] = useState(null)   // {src, alt} | null
   const [infoOpen, setInfoOpen] = useState(false)
   const [pendingCheckout, setPendingCheckout] = useState(false)
   const [info, setInfo] = useState(readInfo)
-  const [settings, setSettings] = useState(null)
+  const [settings, setSettings] = useState(cache ? cache.settings || null : null)
   const [sending, setSending] = useState(false)
 
   useEffect(() => {
@@ -54,10 +59,10 @@ export function StoreProvider({ children }) {
     ]).then(([p, s]) => {
       if (!alive) return
       const list = pinFirst(p.map(fixProduct))
-      setProducts(list); setSettings(s); setStatus('ready')
-    }).catch(() => { if (alive) setStatus('error') })
+      setProducts(list); setSettings(s); setStatus('ready'); writeCache(list, s)
+    }).catch(() => { if (alive && !cache) setStatus('error') })
     return () => { alive = false }
-  }, [])
+  }, [cache])
 
   useEffect(() => { document.body.style.overflow = lightbox ? 'hidden' : '' }, [lightbox])
 
