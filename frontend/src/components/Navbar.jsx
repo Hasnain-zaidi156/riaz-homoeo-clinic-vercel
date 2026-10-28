@@ -4,8 +4,8 @@ import { useStore } from '../context/StoreContext'
 import { FB_URL, WA_ICON, WA_NUMBER, assetUrl } from '../lib/config'
 import { WhatsApp, Facebook, CartPlus } from './Icons'
 
-const DESKTOP = [['about', 'About'], ['products', 'Products'], ['dxn', 'DXN'], ['gallery', 'Gallery'], ['comments', 'Comments'], ['location', 'Location'], ['order', 'Order']]
-const MOBILE = [['about', 'About Doctor'], ['products', 'Products'], ['dxn', 'DXN Range'], ['gallery', 'Gallery'], ['comments', 'Comments'], ['location', 'Location'], ['order', 'Order']]
+const DESKTOP = [['about', 'About'], ['products', 'Products'], ['gallery', 'Gallery'], ['comments', 'Comments'], ['location', 'Location'], ['order', 'Order']]
+const MOBILE = [['about', 'About Doctor'], ['products', 'Products'], ['gallery', 'Gallery'], ['comments', 'Comments'], ['location', 'Location'], ['order', 'Order']]
 
 export default function Navbar() {
   const { cartCount, openCart, settings } = useStore()

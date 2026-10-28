@@ -31,7 +31,7 @@ export default function ProductCard({ p, eager = false, reveal = false, delay = 
         {list.length > 1
           ? <ImageSlider images={list} alt={p.name} eager={eager} />
           : <img src={list[0] || ''} alt={p.name} loading={eager ? 'eager' : 'lazy'} decoding="async" className="single-img" />}
-        <span className="product-cat-label">{p.cat === 'dxn' ? t('DXN Range') : t('Clinic')}</span>
+        <span className="product-cat-label">{t('Clinic')}</span>
       </div>
       <div className="product-info">
         <h4><a href={href} onClick={openLink} className="product-link">{pick(p, 'name')}</a></h4>

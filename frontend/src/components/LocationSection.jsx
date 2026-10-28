@@ -9,10 +9,10 @@ export default function LocationSection() {
       <div className="container order-loc-grid">
         <div>
           <div className="badge"><MapPin size={14} /> {t('Visit Us')}</div>
-          <h2 className="section-title">{t('Riaz Homoeo Clinic')}</h2>
+          <h2 className="section-title">{t('Contact Us')}</h2>
           <div className="loc-info glass">
             <div className="loc-row"><MapPin size={16} /><div>{t('Dhak Bazar, Rohri, Sindh')}</div></div>
-            <div className="loc-row"><Clock size={16} /><div>{t('Morning 10:00 AM – 1:30 PM')}<br />{t('Evening 5:30 PM – 9:30 PM')}<br />{t('Please call before visiting.')}<br /><strong>{t('Friday is off')}</strong></div></div>
+            <div className="loc-row"><Clock size={16} /><div>{t('Morning 10:00 AM – 1:30 PM')}<br />{t('Evening 5:30 PM – 9:30 PM')}<br />{t('Please call before visiting.')}<br /><strong>{t('Friday OFF')}</strong></div></div>
             <div className="loc-row"><Phone size={16} /><div><strong>{t('Call for appointment')}</strong><br /><span dir="ltr">0333-7189748</span><br /><span dir="ltr">0312-3875580</span><br /><span dir="ltr">0308-3773026</span></div></div>
             <a href="https://maps.app.goo.gl/s87mgaDXwtQs2crEA" className="btn-outline" target="_blank" rel="noreferrer">{t('Open Maps')}</a>
           </div>

@@ -4,9 +4,8 @@ import Navbar from './components/Navbar.jsx'
 import Hero from './components/Hero.jsx'
 import About from './components/About.jsx'
 import FeaturedProduct from './components/FeaturedProduct.jsx'
-import Products from './components/Products.jsx'
-import DxnSection from './components/DxnSection.jsx'
 import Gallery from './components/Gallery.jsx'
+import Products from './components/Products.jsx'
 import CommentsSection from './components/CommentsSection.jsx'
 import OrderSection from './components/OrderSection.jsx'
 import LocationSection from './components/LocationSection.jsx'
@@ -25,9 +24,8 @@ export default function App() {
         <Hero />
         <About />
         <FeaturedProduct />
-        <Products />
-        <DxnSection />
         <Gallery />
+        <Products />
         <CommentsSection />
         <OrderSection />
         <LocationSection />

@@ -39,7 +39,7 @@ export default function ProductPage() {
 
   const imgs = p ? (p.imgs && p.imgs.length ? p.imgs : (p.img ? [p.img] : [])) : []
   const inStock = p && p.stock !== false
-  const catLabel = p && (p.cat === 'dxn' ? t('DXN Range') : t('Clinic Range'))
+  const catLabel = t('Clinic')
   const related = p ? products.filter(x => x.cat === p.cat && x.id !== p.id).slice(0, 4) : []
 
   return createPortal(

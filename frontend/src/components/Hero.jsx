@@ -1,7 +1,7 @@
 import { useLang } from '../context/LangContext'
 import { useStore } from '../context/StoreContext'
-import { FB_URL, WA_ICON, WA_NUMBER, assetUrl } from '../lib/config'
-import { Star4, Facebook } from './Icons'
+import { assetUrl } from '../lib/config'
+import { Star4 } from './Icons'
 
 function Person({ src, alt, name, small }) {
   return (
@@ -26,16 +26,7 @@ export default function Hero() {
             <Person src={imgLeft} alt="Syed Maqbool Ahmed Zaidi" name={t('Syed Maqbool Ahmed Zaidi')} small={t('(Shaheed)')} />
           </div>
           <div className="hero-c">
-            {/* Mobile par bhi dikhta hai (pehle chhupa hota tha) */}
             <h1 className="hero-title">{lang === 'ur' ? <>ریاض <span className="gold">ہومیو</span> کلینک</> : <>Riaz <span className="gold">Homoeo</span><br />Clinic</>}</h1>
-            <div className="hero-actions">
-              <div className="pill-group"><div className="pill"><Star4 size={10} /> {t('100% Natural')}</div><div className="pill"><Star4 size={10} /> {t('DXN Authorized')}</div><div className="pill"><Star4 size={10} /> {t('Online Payment')}</div></div>
-              <div className="hero-btns">
-                <a href={`https://wa.me/${WA_NUMBER}?text=Assalamu+Alaikum,+I+need+order`} className="btn-primary"><img src={WA_ICON} alt="" className="visit" /> {t('Order Now')}</a>
-                <a href={FB_URL} target="_blank" rel="noreferrer" className="btn-outline btn-fb"><Facebook size={15} /> {t('Facebook')}</a>
-                <a href="#products" className="btn-outline">{t('View Products')}</a>
-              </div>
-            </div>
           </div>
           <div className="hero-r">
             <Person src={imgRight} alt="Syed Fawad Ahmed Zaidi" name={t('Syed Fawad Ahmed Zaidi')} />

@@ -99,7 +99,7 @@ export function StoreProvider({ children }) {
     if (i?.address) m += `*Address:* ${i.address}\n`
     m += line + '*Products:*\n'
     cart.forEach(x => { m += `- ${x.name} x${x.qty} = ${x.price * x.qty} PKR\n` })
-    m += `${line}Subtotal: ${subtotal} PKR\nDelivery: ${DELIVERY} PKR\n*Total: ${subtotal + DELIVERY} PKR*\n${line}Payment: Online Payment Easypaisa (0333-7189748)`
+    m += `${line}Subtotal: ${subtotal} PKR\nDelivery: ${DELIVERY} PKR\n*Total: ${subtotal + DELIVERY} PKR*`
     setSending(true)
     await Promise.all([saveOrderToBackend(i, cart), new Promise(r => setTimeout(r, 900))])
     setSending(false)

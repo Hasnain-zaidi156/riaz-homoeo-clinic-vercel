@@ -118,7 +118,7 @@ app.use('/api/admin',r);
 let ready;
 function boot(){
  if(!ready)ready=mongoose.connect(process.env.MONGO_URI||'mongodb://127.0.0.1:27017/riaz-clinic').then(async()=>{
- const ALT=['Clinic Front','Dr. Fawad','Homoeopathy','DXN Range','Herbal Meds','Certificate','Certificate','Certificate','Certificate','Certificate','Certificate','Trophy','Trophy'];
+ const ALT=['Clinic Front','Dr. Fawad','Homoeopathy','Herbal Meds','DXN Range','Certificate','Certificate','Certificate','Certificate','Certificate','Certificate','Trophy','Trophy'];
  if(!await MD.countDocuments())await MD.insertMany(require('./gallery.json').map((src,i)=>({src,name:ALT[i]||'Gallery',alt:ALT[i]||'Gallery',show:true,pos:i+1})));
  /* One-time (v18): About image set + saare clinic products ki price 3500. Baad mein admin jo badle woh barqarar rehta hai. */
  const st=await ST.findOne({site:'site'});
