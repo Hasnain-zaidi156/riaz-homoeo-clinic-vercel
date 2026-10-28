@@ -3,7 +3,7 @@ import { useStore } from '../context/StoreContext'
 import ImageSlider from './ImageSlider'
 import { CartPlus } from './Icons'
 
-export default function ProductCard({ p, reveal = false, delay = 0 }) {
+export default function ProductCard({ p, eager = false, reveal = false, delay = 0 }) {
   const { addToCart } = useStore()
   const { t, pick } = useLang()
   const list = p.imgs && p.imgs.length ? p.imgs : (p.img ? [p.img] : [])
@@ -17,8 +17,8 @@ export default function ProductCard({ p, reveal = false, delay = 0 }) {
           ? <span className="stock-ribbon in">{t('IN STOCK')}</span>
           : <span className="stock-ribbon out">{t('OUT OF STOCK')}</span>}
         {list.length > 1
-          ? <ImageSlider images={list} alt={p.name} />
-          : <img src={list[0] || ''} alt={p.name} loading="lazy" className="single-img" />}
+          ? <ImageSlider images={list} alt={p.name} eager={eager} />
+          : <img src={list[0] || ''} alt={p.name} loading={eager ? 'eager' : 'lazy'} decoding="async" className="single-img" />}
         <span className="product-cat-label">{p.cat === 'dxn' ? t('DXN Range') : t('Clinic')}</span>
       </div>
       <div className="product-info">

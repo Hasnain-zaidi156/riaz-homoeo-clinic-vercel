@@ -18,7 +18,7 @@ const MoreBtn = ({ onClick, text, shown, total, what, t }) => (
   </div>
 )
 const cards = (list, from) => list.map((p, i) => (
-  <ProductCard key={p.id} p={p} reveal={from != null && i >= from} delay={from != null ? (i - from) * 0.07 : 0} />
+  <ProductCard key={p.id} p={p} eager={i < 4} reveal={from != null && i >= from} delay={from != null ? (i - from) * 0.07 : 0} />
 ))
 
 export default function Products() {

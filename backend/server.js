@@ -28,7 +28,7 @@ app.get('/api/media/:id/file',ah(async(q,s)=>{
   const m=await MD.findById(q.params.id).select('data contentType src');
   if(!m)return s.sendStatus(404);
   if(m.src)return s.redirect(m.src);
-  s.set({'Content-Type':m.contentType||'image/jpeg','Cache-Control':'public, max-age=31536000, immutable','Cross-Origin-Resource-Policy':'cross-origin'});
+  s.set({'Content-Type':m.contentType||'image/jpeg','Cache-Control':'public, max-age=31536000, s-maxage=31536000, immutable','Cross-Origin-Resource-Policy':'cross-origin'});
   s.send(m.data);
 }));
 app.get('/api/settings',ah(async(q,s)=>s.json(await ST.findOne({site:'site'})||{site:'site'})));

@@ -30,7 +30,7 @@ export default function Gallery() {
           {(items || []).map(([src, alt], i) => (
             /* Masonry collage: har tile ka size alag (nth-child CSS se) */
             <div key={src + i} className="gallery-tile" onClick={() => openLightbox(src, alt)}>
-              <img src={src} alt={alt} loading="lazy" />
+              <img src={src} alt={alt} loading="lazy" decoding="async" />
             </div>
           ))}
         </div>

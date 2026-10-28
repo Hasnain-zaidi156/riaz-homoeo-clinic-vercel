@@ -510,8 +510,9 @@ footer{padding:2.8rem 0;background:linear-gradient(180deg,rgba(var(--bg-rgb),.35
    File: public/fonts/JameelNooriNastaleeqKasheeda.ttf (sirf body ke liye)
    Naskh joined script hai, is liye letter-spacing nahi; spacing line-height + word-spacing se.
    ===================================================== */
-@font-face{font-family:JNK;src:local('Jameel Noori Nastaleeq'),local('JameelNooriNastaleeq'),local('Jameel Noori Nastaleeq Kasheeda'),local('JameelNooriNastaleeqKasheeda');font-display:swap}
-/* Asal font file public/fonts/JameelNooriNastaleeq.ttf — fontLoader.js runtime pe add karta hai. */
+@font-face{font-family:JNK;src:local('Jameel Noori Nastaleeq'),local('JameelNooriNastaleeq'),local('Jameel Noori Nastaleeq Kasheeda'),local('JameelNooriNastaleeqKasheeda'),url('/fonts/JameelNooriNastaleeq.woff2') format('woff2');font-display:swap}
+/* woff2 file sirf tab download hoti hai jab Urdu mode (html[dir=rtl]) on ho */
+/* Asal font file: public/fonts/JameelNooriNastaleeq.woff2 (upar @font-face mein url, sirf Urdu mode mein download hoti hai). */
 :root{--ur-body:JNK,'Noto Nastaliq Urdu',serif;--ur-head:'Noto Nastaliq Urdu',JNK,serif}
 .lang-btn{padding:.45rem .8rem;border-radius:40px;font-size:.8rem;font-weight:700;cursor:pointer;background:var(--glass);border:1px solid rgba(var(--acc),.4);color:#fff;font-family:inherit;transition:.2s}
 .lang-btn:hover{background:var(--glass-strong)}

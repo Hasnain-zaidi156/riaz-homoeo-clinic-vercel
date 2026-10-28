@@ -146,7 +146,7 @@ export default function FeaturedProduct() {
       <div className="container">
         <div className="featured-card glass">
           <div className={`featured-img${phase === 'video' ? ' playing' : ''}`}>
-            <img src={img} alt={p.name} loading="lazy" />
+            <img src={img} alt={p.name} decoding="async" />
 
             {/* ===== 4s THUMBNAIL (shuru mein) -> VIDEO LOOP FOREVER ===== */}
             {hasVideo && embed && phase === 'video' && (
@@ -167,7 +167,7 @@ export default function FeaturedProduct() {
                 src={videoSrc}
                 muted
                 playsInline
-                preload="auto"
+                preload={phase === 'video' ? 'auto' : 'metadata'}
                 onEnded={restartVideo}
                 onError={() => { if (videoSrc !== FEATURED_VIDEO) setUseDefault(true); else setVideoOk(false) }}
               />
