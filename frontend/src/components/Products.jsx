@@ -2,6 +2,7 @@ import { useLang } from '../context/LangContext'
 import { useState } from 'react'
 import { useStore } from '../context/StoreContext'
 import ProductCard from './ProductCard'
+import ProductPage from './ProductPage'
 import { Sparkles, Mushroom, Capsule, ChevronDown } from './Icons'
 
 const DXN_INITIAL = 4, CLINIC_PAGE = 8
@@ -40,6 +41,7 @@ export default function Products() {
   const clinicList = clinic.slice(0, clinicVisible)
 
   return (
+    <>
     <section id="products">
       <div className="container" style={{ textAlign: 'center' }}>
         <div className="badge"><Sparkles size={14} className="gold" /> {t('Curated Collection')}</div>
@@ -68,5 +70,7 @@ export default function Products() {
         </div>
       </div>
     </section>
+    <ProductPage />
+    </>
   )
 }

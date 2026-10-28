@@ -1,7 +1,9 @@
 import { useLang } from '../context/LangContext'
 import { useStore } from '../context/StoreContext'
 import ImageSlider from './ImageSlider'
+import ExpandableText from './ExpandableText'
 import { CartPlus } from './Icons'
+import { navigate, productPath } from '../lib/router'
 
 export default function ProductCard({ p, eager = false, reveal = false, delay = 0 }) {
   const { addToCart } = useStore()
@@ -9,8 +11,18 @@ export default function ProductCard({ p, eager = false, reveal = false, delay = 
   const list = p.imgs && p.imgs.length ? p.imgs : (p.img ? [p.img] : [])
   /* Stock: DB field `stock` — admin toggle. Default true (purane products). */
   const inStock = p.stock !== false
+  const href = productPath(p)
+  /* Card/image/name click => product details page. Buttons, slider controls, links, See More ignore. */
+  const open = e => {
+    if (e.target.closest('button, a, .sdot, .expandable')) return
+    navigate(href)
+  }
+  const openLink = e => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return   // new tab normal chale
+    e.preventDefault(); navigate(href)
+  }
   return (
-    <div className={`product-card glass${reveal ? ' just-revealed' : ''}${inStock ? '' : ' oos'}`} style={reveal ? { animationDelay: `${delay}s` } : undefined}>
+    <div className={`product-card glass clickable${reveal ? ' just-revealed' : ''}${inStock ? '' : ' oos'}`} style={reveal ? { animationDelay: `${delay}s` } : undefined} onClick={open}>
       <div className="product-img-box">
         {/* ===== STOCK RIBBON (corner fold, reference jaisa) ===== */}
         {inStock
@@ -22,8 +34,8 @@ export default function ProductCard({ p, eager = false, reveal = false, delay = 
         <span className="product-cat-label">{p.cat === 'dxn' ? t('DXN Range') : t('Clinic')}</span>
       </div>
       <div className="product-info">
-        <h4>{pick(p, 'name')}</h4>
-        <p className="product-desc">{pick(p, 'desc')}</p>
+        <h4><a href={href} onClick={openLink} className="product-link">{pick(p, 'name')}</a></h4>
+        <ExpandableText className="product-desc" text={pick(p, 'desc')} lines={4} />
         <div className="product-price">PKR {p.price}</div>
         {inStock
           ? <button className="add-cart" onClick={() => addToCart(p.id)}><CartPlus size={14} /> {t('Add to Cart')}</button>

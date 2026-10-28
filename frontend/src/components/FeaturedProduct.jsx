@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from 'react'
 import { useStore } from '../context/StoreContext'
 import { FEATURED_VIDEO, THUMB_SECONDS, EMBED_SECONDS } from '../config/featuredVideo'
 import { WA_ICON, WA_NUMBER } from '../lib/config'
+import ExpandableText from './ExpandableText'
+import { navigate, productPath } from '../lib/router'
 import { Star, CartPlus, VolumeUp, VolumeMute, Expand } from './Icons'
 
 /* Online player links (iframe) vs local .mp4 (native video) */
@@ -187,12 +189,13 @@ export default function FeaturedProduct() {
           </div>
           <div className="featured-info">
             <div className="badge"><Star size={14} /> {t('Featured Product')}</div>
-            <h2 className="section-title">{pick(p, 'name')}</h2>
+            <h2 className="section-title"><a href={productPath(p)} className="product-link" onClick={e => { if (e.metaKey || e.ctrlKey || e.shiftKey) return; e.preventDefault(); navigate(productPath(p)) }}>{pick(p, 'name')}</a></h2>
             <div className="divider-line" />
-            <p className="section-desc">{pick(p, 'desc')}</p>
+            <ExpandableText className="section-desc" text={pick(p, 'desc')} lines={4} />
             <div className="featured-price">PKR {p.price}<small>{t('+ delivery')}</small></div>
             <div className="featured-btns">
               <button className="btn-primary" onClick={() => addToCart(p.id)}><CartPlus size={14} /> {t('Add to Cart')}</button>
+              <a className="btn-outline" href={productPath(p)} onClick={e => { if (e.metaKey || e.ctrlKey || e.shiftKey) return; e.preventDefault(); navigate(productPath(p)) }}>{t('View Details')}</a>
               <a className="btn-primary btn-wa" target="_blank" rel="noopener noreferrer"
                 href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`Assalamu Alaikum, I need order: ${p.name} (PKR ${p.price})`)}`}>
                 <img src={WA_ICON} alt="" className="visit" /> {t('Order on WhatsApp')}
