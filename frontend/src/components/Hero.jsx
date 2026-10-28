@@ -1,12 +1,12 @@
 import { useLang } from '../context/LangContext'
 import { useStore } from '../context/StoreContext'
-import { FB_URL, WA_ICON, WA_NUMBER } from '../lib/config'
+import { FB_URL, WA_ICON, WA_NUMBER, assetUrl } from '../lib/config'
 import { Star4, Facebook } from './Icons'
 
 function Person({ src, alt, name, small }) {
   return (
     <div className="hero-person-wrap glass">
-      <img src={src} alt={alt} className="hero-doctor-img" />
+      {src && <img src={src} alt={alt} className="hero-doctor-img" />}
       <p className="hero-person-name">{name}{small && <><br /><small>{small}</small></>}</p>
     </div>
   )
@@ -15,8 +15,8 @@ function Person({ src, alt, name, small }) {
 export default function Hero() {
   const { t, lang } = useLang()
   const { settings } = useStore()
-  const imgLeft = settings?.doctorLeftImg || 'https://i.ibb.co/fVQn2rmQ/image.png'
-  const imgRight = settings?.doctorRightImg || 'https://i.ibb.co/sBqDn9p/image.png'
+  const imgLeft = settings ? assetUrl(settings.doctorLeftImg || 'https://i.ibb.co/fVQn2rmQ/image.png') : ''
+  const imgRight = settings ? assetUrl(settings.doctorRightImg || 'https://i.ibb.co/sBqDn9p/image.png') : ''
   return (
     <section className="hero">
       <div className="container hero-content">

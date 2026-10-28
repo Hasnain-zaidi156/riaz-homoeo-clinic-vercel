@@ -1,21 +1,33 @@
-/* Premium order loader — RHC logo + spinner, glass style.
-   StoreContext ke `sending` state se chalta hai; App ke andar globally render hota hai. */
+/* Premium loader — RHC logo + spinner, glass style.
+   1) Order bhejte waqt (`sending`)  2) Pehli dafa site khulte waqt jab backend (free Render) jag raha ho (`status === 'loading'`). */
+import { useEffect, useState } from 'react'
 import { useStore } from '../context/StoreContext'
 import { useLang } from '../context/LangContext'
+import { assetUrl } from '../lib/config'
 
 const LOGO_FALLBACK = 'https://i.ibb.co/Q7NhK34X/logo.jpg'
 
 export default function Loader() {
-  const { sending, settings } = useStore()
+  const { sending, status, settings } = useStore()
   const { t } = useLang()
-  if (!sending) return null
+  const waking = status === 'loading'
+  const [slow, setSlow] = useState(false)
+  useEffect(() => {
+    if (!waking) { setSlow(false); return }
+    const id = setTimeout(() => setSlow(true), 5000)
+    return () => clearTimeout(id)
+  }, [waking])
+  if (!sending && !waking) return null
+  /* Startup par admin ki logo aane tak default logo nahi dikhate (warna purani photo flash hoti hai) */
+  const logo = settings ? assetUrl(settings.logoImg || LOGO_FALLBACK) : ''
   return (
-    <div className="loader-overlay" role="status" aria-live="polite">
+    <div className="loader-overlay" role="status" aria-live="polite" style={waking && !sending ? { background: 'rgb(var(--bg-rgb))' } : undefined}>
       <div className="loader-card glass">
-        <img src={settings?.logoImg || LOGO_FALLBACK} alt="Riaz Homoeo Clinic" className="loader-logo" />
+        {logo && <img src={logo} alt="Riaz Homoeo Clinic" className="loader-logo" />}
         <span className="loader-spin" />
-        <b>{t('Sending your order...')}</b>
-        <small>{t('Please wait')}</small>
+        {sending
+          ? <><b>{t('Sending your order...')}</b><small>{t('Please wait')}</small></>
+          : <><b>{t('Loading website...')}</b><small>{slow ? t('Server start ho raha hai, 30-60 second lag sakte hain') : t('Please wait')}</small></>}
       </div>
     </div>
   )

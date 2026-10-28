@@ -4,11 +4,11 @@ import { Check, ImageIcon, Upload } from '../../components/Icons'
 import { Modal, Loading, useToast } from './ui'
 
 /* Image ko upload se pehle chhota karta hai (max 1600px) taake website tez rahe */
-const MAX_SIDE = 1600, MAX_BYTES = 4.5 * 1024 * 1024
+const MAX_SIDE = 1600, MAX_BYTES = 3 * 1024 * 1024 /* Vercel request limit 4.5MB hai (base64 ~33% bara hota hai) */
 const readAsDataUrl = f => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(f) })
 async function prepare(file) {
   if (file.type === 'image/gif') {
-    if (file.size > MAX_BYTES) throw new Error('GIF is too large (max 4.5 MB)')
+    if (file.size > MAX_BYTES) throw new Error('GIF is too large (max 3 MB)')
     return readAsDataUrl(file)
   }
   const bmp = await createImageBitmap(file)

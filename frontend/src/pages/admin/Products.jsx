@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Package, Pencil, Plus, Search, Trash, Times } from '../../components/Icons'
 import { Badge, Empty, Loading, Modal, Switch, money, useConfirm, useToast } from './ui'
 import MediaPicker from './MediaPicker'
+import { assetUrl } from '../../lib/config'
 
 const imgsOf = p => (p.imgs?.length ? p.imgs : p.img ? [p.img] : [])
 const BLANK = { name: '', nameUr: '', desc: '', descUr: '', price: '', cat: 'clinic', stock: true, imgs: [], video: '' }
@@ -46,7 +47,7 @@ function ProductForm({ product, api, media, reloadMedia, onSaved, onClose }) {
           <span className="adm-label">Images <small className="adm-muted">The first image is the main one.</small></span>
           <div className="adm-thumbs">
             {f.imgs.map((u, i) => (
-              <div key={u} className="adm-thumb"><img src={u} alt="" />{i === 0 && <em>Main</em>}
+              <div key={u} className="adm-thumb"><img src={assetUrl(u)} alt="" />{i === 0 && <em>Main</em>}
                 <button type="button" onClick={() => dropImg(u)} aria-label="Remove image"><Times size={12} /></button></div>))}
             <button type="button" className="adm-thumb add" onClick={() => setPicker(true)} aria-label="Add images"><Plus size={22} /><span>Add</span></button>
           </div>
@@ -99,7 +100,7 @@ export default function Products({ d, api, patch, reload }) {
           <thead><tr><th>Product</th><th>Category</th><th className="num">Price</th><th>Stock</th><th aria-label="Actions" /></tr></thead>
           <tbody>{shown.map(p => (
             <tr key={p._id}>
-              <td><div className="adm-prod"><img src={imgsOf(p)[0] || ''} alt="" onError={e => { e.currentTarget.style.visibility = 'hidden' }} />
+              <td><div className="adm-prod"><img src={assetUrl(imgsOf(p)[0]) || ''} alt="" onError={e => { e.currentTarget.style.visibility = 'hidden' }} />
                 <div><b>{p.name}</b>{p.nameUr && <small dir="rtl">{p.nameUr}</small>}</div></div></td>
               <td><Badge tone={p.cat === 'dxn' ? 'warn' : 'info'}>{p.cat === 'dxn' ? 'DXN' : 'Clinic'}</Badge></td>
               <td className="num nowrap">{money(p.price)}</td>

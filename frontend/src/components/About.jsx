@@ -1,6 +1,6 @@
 import { useLang } from '../context/LangContext'
 import { useStore } from '../context/StoreContext'
-import { FB_URL, WA_ICON, WA_NUMBER } from '../lib/config'
+import { FB_URL, WA_ICON, WA_NUMBER, assetUrl } from '../lib/config'
 import { Stethoscope, MapPin, WhatsApp, Sprout, Heartbeat, CheckCircle, Facebook } from './Icons'
 
 export default function About() {
@@ -10,7 +10,7 @@ export default function About() {
     <section id="about">
       <div className="container about-grid">
         <div className="doctor-profile glass">
-          <img src={settings?.doctorAboutImg || 'https://i.ibb.co/PZvDc5qS/image.png'} alt="Dr. Syed Fawad Ahmed Zaidi" className="doctor-photo-about" />
+          {settings && <img src={assetUrl(settings.doctorAboutImg || 'https://i.ibb.co/PZvDc5qS/image.png')} alt="Dr. Syed Fawad Ahmed Zaidi" className="doctor-photo-about" />}
           <h3 style={{ fontFamily: "'Fraunces',Georgia,serif", fontSize: '1.8rem' }}>{t('Dr. Syed Fawad')}<br />{t('Ahmed Zaidi')}</h3>
           <p className="gold" style={{ fontWeight: 500 }}>{t('DHMS-RHMP-BA · Homoeopathic Consultant')}</p>
           <div className="info-row">

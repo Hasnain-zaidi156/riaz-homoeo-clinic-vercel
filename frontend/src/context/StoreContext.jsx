@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { API, DELIVERY, WA_NUMBER, ORDER_WA_NUMBER } from '../lib/config'
+import { API, DELIVERY, WA_NUMBER, ORDER_WA_NUMBER, assetUrl } from '../lib/config'
 import Loader from '../components/Loader'
 
 /* PIN_FIRST: jin products ko Clinic Range mein sab se pehle dikhana hai unki id.
@@ -9,6 +9,21 @@ const pinFirst = list => [
   ...PIN_FIRST.map(id => list.find(p => p.id === id)).filter(Boolean),
   ...list.filter(p => !PIN_FIRST.includes(p.id)),
 ]
+
+/* Render free server soya ho to 30-60 sec lagte hain: retry + localStorage cache (pichli dafa ka data foran dikhta hai).
+   Is se admin ki lagayi hui images default photo se pehle flash nahi hoti. */
+const CACHE_KEY = 'rhc_cache_v1'
+const readCache = () => { try { const c = JSON.parse(localStorage.getItem(CACHE_KEY)); return c && Array.isArray(c.products) && c.products.length ? c : null } catch { return null } }
+const writeCache = (products, settings) => { try { localStorage.setItem(CACHE_KEY, JSON.stringify({ products, settings })) } catch { /* ignore */ } }
+const sleep = ms => new Promise(r => setTimeout(r, ms))
+async function getJSON(url, tries = 18, gap = 4000) {
+  for (let i = 0; i < tries; i++) {
+    try { const r = await fetch(url); if (r.ok) return await r.json() } catch { /* server so raha hai — dobara try */ }
+    if (i < tries - 1) await sleep(gap)
+  }
+  throw new Error('unreachable')
+}
+const fixProduct = p => ({ ...p, img: assetUrl(p.img), imgs: Array.isArray(p.imgs) ? p.imgs.map(assetUrl) : p.imgs })
 
 const INFO_KEY = 'rhc_customer_info'
 const readInfo = () => { try { const s = localStorage.getItem(INFO_KEY); return s ? JSON.parse(s) : null } catch { return null } }
@@ -24,26 +39,30 @@ const Ctx = createContext(null)
 export const useStore = () => useContext(Ctx)
 
 export function StoreProvider({ children }) {
-  const [products, setProducts] = useState([])
-  const [status, setStatus] = useState('loading') // loading | ready | error
+  const [cache] = useState(readCache)
+  const [products, setProducts] = useState(cache ? cache.products : [])
+  const [status, setStatus] = useState(cache ? 'ready' : 'loading') // loading | ready | error
   const [cart, setCart] = useState([])
   const [cartOpen, setCartOpen] = useState(false)
   const [lightbox, setLightbox] = useState(null)   // {src, alt} | null
   const [infoOpen, setInfoOpen] = useState(false)
   const [pendingCheckout, setPendingCheckout] = useState(false)
   const [info, setInfo] = useState(readInfo)
-  const [settings, setSettings] = useState(null)
+  const [settings, setSettings] = useState(cache ? cache.settings || null : null)
   const [sending, setSending] = useState(false)
 
   useEffect(() => {
     let alive = true
-    fetch(`${API}/api/products`)
-      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json() })
-      .then(d => { if (alive) { setProducts(pinFirst(d)); setStatus('ready') } })
-      .catch(() => alive && setStatus('error'))
-    fetch(`${API}/api/settings`).then(r => r.json()).then(d => alive && setSettings(d)).catch(() => {})
+    Promise.all([
+      getJSON(`${API}/api/products`).then(d => { if (!Array.isArray(d)) throw new Error('bad'); return d }),
+      getJSON(`${API}/api/settings`, 6).catch(() => ({})),
+    ]).then(([p, s]) => {
+      if (!alive) return
+      const list = pinFirst(p.map(fixProduct))
+      setProducts(list); setSettings(s); setStatus('ready'); writeCache(list, s)
+    }).catch(() => { if (alive && !cache) setStatus('error') })
     return () => { alive = false }
-  }, [])
+  }, [cache])
 
   useEffect(() => { document.body.style.overflow = lightbox ? 'hidden' : '' }, [lightbox])
 

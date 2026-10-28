@@ -55,3 +55,15 @@ src/
 1. **Backend** project: Root Directory = `backend`. Env vars: `MONGO_URI`, `JWT_SECRET`, `ADMIN_USER`, `ADMIN_PASS`, `CLIENT_URL` (frontend ka URL, end mein `/` ke baghair).
 2. **Frontend** project: Root Directory = `frontend`, Framework = Vite. Env var: `VITE_API_BASE` = backend ka Vercel URL (end mein `/` ke baghair).
 3. Dono ke `vercel.json` pehle se maujood hain. Env vars badalne ke baad Redeploy karein.
+
+## Render (backend) + Netlify (frontend)
+**Render:** New > Web Service, Root Directory = `backend`, Build = `npm install`, Start = `node server.js`, Plan = Free.
+Env vars: `MONGO_URI`, `JWT_SECRET`, `ADMIN_USER`, `ADMIN_PASS`, `CLIENT_URL` (Netlify ka URL, end mein `/` nahi).
+**Netlify:** Base directory = `frontend`, Build = `npm run build`, Publish = `dist`. Env var: `VITE_API_BASE` = Render ka URL (end mein `/` nahi).
+Free Render 15 min idle ke baad so jata hai; pehli dafa site par loader aata hai jab tak server jag jaye.
+Optional: UptimeRobot se har 5 minute `https://<render-url>/` ping karwayein to server soye ga hi nahi.
+
+## Vercel deploy (2 alag projects, GitHub se)
+1. **Backend** project: Root Directory = `backend`, Framework = Other. Env vars: `MONGO_URI`, `JWT_SECRET`, `ADMIN_USER`, `ADMIN_PASS`, `CLIENT_URL` (frontend URL, end mein `/` nahi).
+2. **Frontend** project: Root Directory = `frontend`, Framework = Vite. Env var: `VITE_API_BASE` = backend ka Vercel URL (end mein `/` nahi).
+3. Env vars badalne ke baad Redeploy karein. `render.yaml` / `netlify.toml` Vercel par ignore hote hain.

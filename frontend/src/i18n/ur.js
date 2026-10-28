@@ -62,7 +62,7 @@ export const ur = {
   // Cart / modal
   'Your Cart': 'آپ کا کارٹ', 'For Contact': 'رابطے کے لیے', 'Edit': 'ترمیم', 'Abhi koi info save nahi': 'ابھی کوئی معلومات محفوظ نہیں',
   'Cart khali hai': 'کارٹ خالی ہے', 'Subtotal': 'ذیلی کل', 'Delivery': 'ڈیلیوری', 'Total': 'کل',
-  'Sending your order...': 'آپ کا آرڈر جا رہا ہے', 'Please wait': 'براہِ مہربانی انتظار کریں',
+  'Sending your order...': 'آپ کا آرڈر جا رہا ہے', 'Loading website...': 'ویب سائٹ لوڈ ہو رہی ہے', 'Server start ho raha hai, 30-60 second lag sakte hain': 'سرور شروع ہو رہا ہے، 30 سے 60 سیکنڈ لگ سکتے ہیں', 'Please wait': 'براہِ مہربانی انتظار کریں',
   'Complete Order': 'آرڈر مکمل کریں', 'Close': 'بند کریں',
   'Delivery Information': 'ڈیلیوری کی معلومات', 'Ek baar bhar dein — hum save kar lein ge aapki info': 'ایک بار بھر دیں — ہم آپ کی معلومات محفوظ کر لیں گے',
   'Aapka Name (Full Name)': 'آپ کا نام (پورا نام)', 'Phone Number (03xx-xxxxxxx)': 'فون نمبر (03xx-xxxxxxx)',

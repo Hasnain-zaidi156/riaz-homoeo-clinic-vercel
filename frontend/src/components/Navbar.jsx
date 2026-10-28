@@ -1,7 +1,7 @@
 import { useLang } from '../context/LangContext'
 import { useState } from 'react'
 import { useStore } from '../context/StoreContext'
-import { FB_URL, WA_ICON, WA_NUMBER } from '../lib/config'
+import { FB_URL, WA_ICON, WA_NUMBER, assetUrl } from '../lib/config'
 import { WhatsApp, Facebook, CartPlus } from './Icons'
 
 const DESKTOP = [['about', 'About'], ['products', 'Products'], ['dxn', 'DXN'], ['gallery', 'Gallery'], ['comments', 'Comments'], ['location', 'Location'], ['order', 'Order']]
@@ -16,7 +16,7 @@ export default function Navbar() {
     <nav>
       <div className="nav-container">
         <a href="#" className="logo">
-          <img src={settings?.logoImg || 'https://i.ibb.co/Q7NhK34X/logo.jpg'} alt={settings?.logoImg ? 'Clinic logo' : 'Dr. Fawad'} className="logo-img-circle" />
+          {settings && <img src={assetUrl(settings.logoImg || 'https://i.ibb.co/Q7NhK34X/logo.jpg')} alt={settings.logoImg ? 'Clinic logo' : 'Dr. Fawad'} className="logo-img-circle" />}
           <div className="logo-text"><h2>{t('Riaz Homoeo Clinic')}</h2><p>{t('Rohri · Sindh')}</p><div className="logo-since">{t('Est. Since 1967')}</div></div>
         </a>
         <div className="nav-links">
