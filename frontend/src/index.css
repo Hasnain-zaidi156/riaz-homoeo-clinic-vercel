@@ -604,3 +604,7 @@ html[dir=rtl] .pd-desc{line-height:2.4;word-spacing:.18em}
   .pd-info .featured-btns .btn-primary{flex:1 1 100%}
 }
 @media(max-width:560px){.pd-related .prod-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* About: sub-headings */
+.about-sub{font-size:1.05rem;font-weight:600;margin:1.4rem 0 .5rem;letter-spacing:.02em}
+html[dir=rtl] .about-sub{font-family:var(--ur-head);font-size:1.3rem;line-height:2}
