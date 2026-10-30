@@ -12,7 +12,6 @@ import DXNProducts from './pages/DXNProducts.jsx'
 import ClinicProducts from './pages/ClinicProducts.jsx'
 import GalleryPage from './pages/GalleryPage.jsx'
 import Certificates from './pages/Certificates.jsx'
-import VideosPage from './pages/Videos.jsx'
 import Contact from './pages/Contact.jsx'
 import ProductPage from './components/ProductPage.jsx'
 
@@ -31,7 +30,6 @@ export default function App() {
             <Route path="/products/clinic" element={<ClinicProducts />} />
             <Route path="/gallery" element={<GalleryPage />} />
             <Route path="/certificates" element={<Certificates />} />
-            <Route path="/videos" element={<VideosPage />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/product/:id" element={<ProductPage />} />
             <Route path="*" element={<HomePage />} />

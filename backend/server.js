@@ -4,10 +4,10 @@ if(!process.env.JWT_SECRET){console.error('Set JWT_SECRET in .env');process.exit
 const app=express();app.set('trust proxy',1);app.use('/api/admin/media',express.json({limit:'8mb'}));app.use(cors(process.env.CLIENT_URL?{origin:process.env.CLIENT_URL.split(',')}:undefined),express.json({limit:'1mb'}));
 app.use((q,s,n)=>boot().then(()=>n(),e=>s.status(500).json({error:e.message})));/* Vercel: DB connect + seed pehle ho jaye */
 const S=o=>new mongoose.Schema(o,{timestamps:true});
-const P=mongoose.model('Product',S({id:Number,cat:String,name:String,nameUr:String,desc:String,descUr:String,price:Number,img:String,imgs:[String],video:String,stock:{type:Boolean,default:true}}));
+const P=mongoose.model('Product',S({id:Number,cat:String,name:String,nameUr:String,desc:String,descUr:String,price:Number,img:String,imgs:[String],stock:{type:Boolean,default:true}}));
 const O=mongoose.model('Order',S({name:String,phone:String,address:String,items:[{name:String,qty:Number,price:Number}],subtotal:Number,delivery:Number,total:Number,status:{type:String,default:'new'}}));
 const A=mongoose.model('Appointment',S({name:String,phone:String,date:String,token:Number,note:String,status:{type:String,default:'booked'}}));
-const ST=mongoose.model('Setting',S({site:{type:String,default:'site',unique:true},logoImg:String,doctorLeftImg:String,doctorRightImg:String,doctorAboutImg:String,featuredVideo:String,aboutSeed:Boolean,priceSeed:Boolean,phone1:String,phone2:String,email:String,address:String,aboutText:String}));
+const ST=mongoose.model('Setting',S({site:{type:String,default:'site',unique:true},logoImg:String,doctorLeftImg:String,doctorRightImg:String,doctorAboutImg:String,aboutSeed:Boolean,priceSeed:Boolean,phone1:String,phone2:String,email:String,address:String,aboutText:String,altSeed:Boolean}));
 /* Media library: website gallery + admin uploads. Image ya to external URL (src) hoti hai ya DB mein (data) save hoti hai.
    show=true => website ki Gallery mein nazar aati hai. */
 const MD=mongoose.model('Media',S({name:String,alt:String,src:String,data:Buffer,contentType:String,size:Number,show:{type:Boolean,default:true},pos:{type:Number,default:0}}));
@@ -20,8 +20,8 @@ const auth=(q,s,n)=>{try{jwt.verify((q.headers.authorization||'').slice(7),proce
 app.get('/',(q,s)=>s.json({ok:true,service:'riaz-homoeo-clinic-api'}));
 app.get('/api/products',ah(async(q,s)=>s.json(await P.find().sort('id'))));
 app.get('/api/gallery',ah(async(q,s)=>{
-  const rows=await MD.find({show:{$ne:false}}).select('-data').sort('pos createdAt');
-  s.json(rows.map(m=>({url:mediaUrl(m),alt:m.alt||m.name||'Gallery',isVideo:m.isVideo===true,contentType:m.contentType||''})));
+  const rows=await MD.find({show:{$ne:false},isVideo:{$ne:true}}).select('-data').sort('pos createdAt');
+  s.json(rows.map(m=>({url:mediaUrl(m),alt:m.alt||'',name:m.name||'',isVideo:m.isVideo===true,contentType:m.contentType||''})));
 }));
 app.get('/api/media/:id/file',ah(async(q,s)=>{
   if(!mongoose.isValidObjectId(q.params.id))return s.sendStatus(404);
@@ -81,7 +81,7 @@ r.delete('/products/:id',ah(async(q,s)=>{await P.findByIdAndDelete(q.params.id);
 r.get('/settings',ah(async(q,s)=>s.json(await ST.findOne({site:'site'})||{site:'site'})));
 r.put('/settings',ah(async(q,s)=>{
   const b=q.body||{},set={};
-  ['logoImg','doctorLeftImg','doctorRightImg','doctorAboutImg','phone1','phone2','email','address','aboutText','featuredVideo'].forEach(k=>{if(typeof b[k]==='string')set[k]=b[k].trim().slice(0,600)});
+  ['logoImg','doctorLeftImg','doctorRightImg','doctorAboutImg','phone1','phone2','email','address','aboutText'].forEach(k=>{if(typeof b[k]==='string')set[k]=b[k].trim().slice(0,600)});
   s.json(await ST.findOneAndUpdate({site:'site'},{$set:set},{upsert:true,new:true,setDefaultsOnInsert:true}));
 }));
 /* Admin: saare comments dekhna / delete karna */
@@ -96,17 +96,16 @@ r.delete('/comments/:id',ah(async(q,s)=>{
   await CM.deleteOne({_id:id});s.json({ok:1});
 }));
 /* Admin: media library (+ button) — upload, gallery se select, website par show/hide */
-r.get('/media',ah(async(q,s)=>s.json((await MD.find().select('-data').sort('pos createdAt')).map(mediaOut))));
+r.get('/media',ah(async(q,s)=>s.json((await MD.find({isVideo:{$ne:true}}).select('-data').sort('pos createdAt')).map(mediaOut))));
 r.post('/media',ah(async(q,s)=>{
-  const m=/^data:((?:image|video)\/(?:jpeg|png|webp|gif|mp4|webm|ogg|quicktime));base64,([A-Za-z0-9+/=]+)$/.exec(String(q.body&&q.body.dataUrl||''));
-  if(!m)return s.status(400).json({error:'Sirf JPG, PNG, WEBP, GIF image ya MP4, WEBM, OGG video upload karein'});
+  const m=/^data:(image\/(?:jpeg|png|webp|gif));base64,([A-Za-z0-9+/=]+)$/.exec(String(q.body&&q.body.dataUrl||''));
+  if(!m)return s.status(400).json({error:'Sirf JPG, PNG, WEBP ya GIF image upload karein'});
   const buf=Buffer.from(m[2],'base64');
-  const isVideo=m[1].startsWith('video/');
-  const maxSize=isVideo?50*1024*1024:5*1024*1024; // video 50MB, image 5MB
-  if(!buf.length||buf.length>maxSize)return s.status(400).json({error:isVideo?'Video 50MB se chota hona chahiye':'Image 5MB se choti honi chahiye'});
+    const maxSize=5*1024*1024; // image 5MB
+  if(!buf.length||buf.length>maxSize)return s.status(400).json({error:'Image 5MB se choti honi chahiye'});
   const l=await MD.findOne().sort('-pos').select('pos');
-  const name=String(q.body.name||(isVideo?'video':'image')).slice(0,80);
-  const d=await MD.create({name,alt:String(q.body.alt||name.replace(/\.[^.]+$/,'')).slice(0,80),data:buf,contentType:m[1],size:buf.length,show:q.body.show!==false,pos:(l?l.pos:0)+1,isVideo:isVideo===true});
+  const name=String(q.body.name||'image').slice(0,80);
+  const d=await MD.create({name,alt:String(q.body.alt||'').slice(0,80),data:buf,contentType:m[1],size:buf.length,show:q.body.show!==false,pos:(l?l.pos:0)+1,isVideo:false});
   s.json({...mediaOut(d),isVideo:d.isVideo});
 }));
 r.patch('/media/:id',ah(async(q,s)=>{
@@ -121,7 +120,9 @@ let ready;
 function boot(){
  if(!ready)ready=mongoose.connect(process.env.MONGO_URI||'mongodb://127.0.0.1:27017/riaz-clinic').then(async()=>{
  const ALT=['Clinic Front','Dr. Fawad','Homoeopathy','Herbal Meds','DXN Range','Certificate','Certificate','Certificate','Certificate','Certificate','Certificate','Trophy','Trophy'];
- if(!await MD.countDocuments())await MD.insertMany(require('./gallery.json').map((src,i)=>({src,name:ALT[i]||'Gallery',alt:ALT[i]||'Gallery',show:true,pos:i+1})));
+ if(!await MD.countDocuments())await MD.insertMany(require('./gallery.json').map((src,i)=>({src,name:ALT[i]||'Gallery',alt:'',show:true,pos:i+1})));
+ /* One-time: auto caption (seed naam ya file ka naam) hata do — ab sirf admin ka likha caption dikhega. name nahi badalta (Certificates page name se pehchanti hai) */
+ { const stc=await ST.findOne({site:'site'}); if(!stc||!stc.altSeed){ for(const m of await MD.find().select('name alt')){ const nm=String(m.name||''); if(m.alt&&(m.alt===nm||m.alt===nm.replace(/\.[^.]+$/,''))) await MD.updateOne({_id:m._id},{$set:{alt:''}}) } await ST.findOneAndUpdate({site:'site'},{$set:{altSeed:true}},{upsert:true,setDefaultsOnInsert:true}) } }
  /* One-time (v18): About image set + saare clinic products ki price 3500. Baad mein admin jo badle woh barqarar rehta hai. */
  const st=await ST.findOne({site:'site'});
  if(!st||!st.aboutSeed)await ST.findOneAndUpdate({site:'site'},{$set:{doctorAboutImg:'https://i.ibb.co/PZvDc5qS/image.png',phone1:'0333-7189748',phone2:'0312-3875580',email:'riazhomoeoclinic@gmail.com',address:'Dhak Bazar, Rohri, Sindh, Pakistan',aboutSeed:true}},{upsert:true,setDefaultsOnInsert:true});

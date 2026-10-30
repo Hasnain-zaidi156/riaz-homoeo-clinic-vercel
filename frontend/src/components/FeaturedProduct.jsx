@@ -1,188 +1,96 @@
-import { useLang } from '../context/LangContext'
 import { useEffect, useRef, useState } from 'react'
+import { useLang } from '../context/LangContext'
 import { useStore } from '../context/StoreContext'
-import { FEATURED_VIDEO, THUMB_SECONDS, EMBED_SECONDS } from '../config/featuredVideo'
 import { WA_ICON, WA_NUMBER } from '../lib/config'
 import ExpandableText from './ExpandableText'
 import { productPath } from '../lib/router'
-import { Star, CartPlus, VolumeUp, VolumeMute, Expand } from './Icons'
+import { Star, CartPlus, Expand, VolumeUp, VolumeMute } from './Icons'
 import { Link, useNavigate } from 'react-router-dom'
 
-/* Online player links (iframe) vs local .mp4 (native video) */
-const isEmbed = url =>
-  /screenpal\.com|screencast-o-matic\.com|youtube\.com|youtu\.be|vimeo\.com|\/player\//.test(url)
+const FEATURED_VIDEO = '/videos/featured-video.mp4'
 
-const embedUrl = url => {
-  /* ScreenPal watch link ko player link me convert (autoplay) */
-  const m = String(url).match(/screenpal\.com\/(?:watch|embed|player|content|v|video)\/([A-Za-z0-9]+)/)
-  if (m) return `https://go.screenpal.com/player/${m[1]}?ff=true&autoplay=true`
-  /* YouTube watch -> embed */
-  const y = String(url).match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{6,})/)
-  if (y) return `https://www.youtube.com/embed/${y[1]}?autoplay=1&mute=0`
-  return url
-}
-
-/* Main product = backend ka product id 1000 (admin panel se edit hota hai).
-   Cycle = 4 sec thumbnail (sirf page load par aik dafa) -> phir video
-   hamesha bina rukay repeat hoti hai (koi 4 second ka gap nahi).
-   Video par mute/unmute button bhi hai. */
+/* Featured (main) product.
+   Video tab tak load/play NAHI hoti jab tak user scroll karke is product tak na pahunche.
+   Pahunchne par muted chalti hai (loop), bahar jaye to pause. Sirf aik mute/unmute button. */
 export default function FeaturedProduct() {
   const { products, addToCart, openLightbox } = useStore()
   const { t, pick } = useLang()
   const navigate = useNavigate()
-  const videoRef = useRef(null)
-  /* thumb = shuru ki thumbnail | video = video chal rahi hai */
-  const [phase, setPhase] = useState('thumb')
-  const [videoOk, setVideoOk] = useState(true)
-  /* soundOn = abhi video par awaz chal rahi | userOff = user ne khud mute kiya
-     Default: awaz ON rehni chahiye — browser block kare (pehli visit) to
-     pehli interaction par khud ON ho jati hai. User khud band kar sakta hai. */
-  const [soundOn, setSoundOn] = useState(false)
-  const [userOff, setUserOff] = useState(false)
-  const [embedKey, setEmbedKey] = useState(0) // embed restart ke liye
   const p = products.find(x => x.id === 1000)
 
-  const img = p ? ((p.imgs && p.imgs[0]) || p.img) : ''
-  /* Video: pehle product ki apni video (admin Video URL), warna site setting, warna config link */
-  /* v18: admin se Settings tab hata diya gaya, isliye purani DB 'featuredVideo' setting ab ignore hoti hai
-     (woh toot'ti link video rok sakti thi). Priority: product ka Video link -> bundled /videos/featured-video.mp4 */
-  const [useDefault, setUseDefault] = useState(false) // custom video fail ho to bundled file par wapas
-  const custom = (p && p.video) || ''
-  const videoSrc = (custom && !useDefault) ? custom : FEATURED_VIDEO
-  const embed = videoOk && isEmbed(videoSrc)
-  const hasVideo = Boolean(videoSrc) && videoOk
-  const isNative = hasVideo && !embed
+  const boxRef = useRef(null)
+  const videoRef = useRef(null)
+  const [inView, setInView] = useState(false)
+  const [started, setStarted] = useState(false) // pehli dafa product nazar aaya
+  const [playing, setPlaying] = useState(false)
+  const [muted, setMuted] = useState(true)
+  const [useDefault, setUseDefault] = useState(false)
+  const [failed, setFailed] = useState(false)
 
-  /* ---------- 1) Page khula: 4 sec thumbnail, phir permanent video loop ---------- */
+  const custom = p && p.video && !/screenpal|youtube|youtu\.be|vimeo|\/player\//.test(p.video) ? p.video : ''
+  const videoSrc = custom && !useDefault ? custom : FEATURED_VIDEO
+
+  /* Product screen par aaya? */
   useEffect(() => {
-    if (!hasVideo || phase !== 'thumb') return
-    const id = setTimeout(() => setPhase('video'), THUMB_SECONDS * 1000)
-    return () => clearTimeout(id)
-  }, [hasVideo, phase])
+    const el = boxRef.current
+    if (!el || !('IntersectionObserver' in window)) return
+    const io = new IntersectionObserver(([e]) => {
+      setInView(e.isIntersecting)
+      if (e.isIntersecting) setStarted(true)
+    }, { threshold: 0.4 })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [!!p])
 
-  /* ---------- 2) Native .mp4: video phase shuru ho to VOICE ke sath chalana;
-     browser block kare (koi interaction nahi abhi) to mute par chalati hai —
-     pehli interaction par sound apne aap ON ho jayegi (effect 2d) ---------- */
-  const playWithSound = () => {
-    const v = videoRef.current; if (!v) return Promise.reject()
-    if (userOff) { v.muted = true; setSoundOn(false); return v.play() }
-    v.muted = false
-    return v.play().then(() => setSoundOn(true)).catch(() => {
-      v.muted = true; setSoundOn(false)
-      return v.play().then(() => setSoundOn(false)).catch(() => setPhase('video'))
-    })
-  }
-
+  /* Nazar aaye to play, nikal jaye to pause */
   useEffect(() => {
-    if (phase !== 'video' || !isNative) return
-    const v = videoRef.current; if (!v) return
-    v.currentTime = 0
-    v.pause()
-  }, [phase, isNative, videoSrc])
-
-  /* ---------- 3) Native: video khatam = turant wapas shuru (bina 4 sec gap) ---------- */
-  const restartVideo = () => {
-    const v = videoRef.current; if (!v) return
-    v.currentTime = 0
-    playWithSound().catch(() => {})
-  }
-
-  /* ---------- 3b) Watchdog: ended event/loop-block miss ho to bhi restart ---------- */
-  useEffect(() => {
-    if (phase !== 'video' || !isNative) return
-    const v = videoRef.current; if (!v) return
-    const iv = setInterval(() => {
-      if (v.duration && (v.ended || v.currentTime >= v.duration - 0.2)) restartVideo()
-    }, 250)
-    return () => clearInterval(iv)
-  }, [phase, isNative, videoSrc])
-
-  /* ---------- 4) Thumbnail phase (sirf shuru mein): video rukay rahe ---------- */
-  useEffect(() => {
-    if (!isNative) return
     const v = videoRef.current
-    if (phase === 'thumb' && v && !v.paused) { v.pause(); v.currentTime = 0 }
-  }, [phase, isNative])
+    if (!v) return
+    if (inView) {
+      v.play().catch(() => { v.muted = true; setMuted(true); v.play().catch(() => {}) })
+    } else {
+      v.pause()
+    }
+  }, [inView, started])
 
-  /* ---------- 5) Embed (ScreenPal/YouTube link) restart timer ---------- */
-  useEffect(() => {
-    if (phase !== 'video' || !embed || !hasVideo) return
-    const id = setTimeout(() => setEmbedKey(k => k + 1), EMBED_SECONDS * 1000)
-    return () => clearTimeout(id)
-  }, [phase, embed, hasVideo])
-
-  /* ---------- 6) Mute button: user khud awaz ON/OFF kar sakta hai ---------- */
   const toggleMute = e => {
     e.stopPropagation()
-    setUserOff(o => {
-      const off = !o
-      const v = videoRef.current
-      if (v) {
-        v.muted = off
-        if (!off) { v.currentTime = 0; v.play().then(() => setSoundOn(true)).catch(() => { v.muted = true; setSoundOn(false) }) }
-        else setSoundOn(false)
-      }
-      return off
-    })
+    const v = videoRef.current
+    if (!v) return
+    v.muted = !v.muted
+    setMuted(v.muted)
+    if (v.paused && inView) v.play().catch(() => {})
   }
 
-  /* ---------- 2d) Visitor ka PEHLA interaction par sound apne aap ON ----------
-     (jab tak user ne khud mute nahi kiya — sound ON rakhte hain) */
-  useEffect(() => {
-    if (!isNative) return
-    const tryUnmute = () => {
-      const v = videoRef.current
-      if (v && !userOff && v.muted) { v.currentTime = 0; v.muted = false; v.play().then(() => setSoundOn(true)).catch(() => {}) }
-    }
-    document.addEventListener('pointerdown', tryUnmute, { once: true })
-    document.addEventListener('keydown', tryUnmute, { once: true })
-    return () => {
-      document.removeEventListener('pointerdown', tryUnmute)
-      document.removeEventListener('keydown', tryUnmute)
-    }
-  }, [isNative, userOff])
-
-  /* Products abhi load nahi huay — sab hooks upar ho chuki, ab render null */
   if (!p) return null
+  const img = (p.imgs && p.imgs[0]) || p.img
 
   return (
     <section id="featured" style={{ paddingTop: 0 }}>
       <div className="container">
         <div className="featured-card glass">
-          <div className={`featured-img${phase === 'video' ? ' playing' : ''}`}>
+          <div ref={boxRef} className={`featured-img${playing ? ' playing' : ''}`}>
             <img src={img} alt={p.name} decoding="async" />
-
-            {/* ===== 4s THUMBNAIL (shuru mein) -> VIDEO LOOP FOREVER ===== */}
-            {hasVideo && embed && phase === 'video' && (
-              <iframe
-                key={embedKey}
-                className="featured-video iframe"
-                src={embedUrl(videoSrc)}
-                title={pick(p, 'name')}
-                allow="autoplay; fullscreen; encrypted-media"
-                allowFullScreen
-                scrolling="no"
-              />
-            )}
-            {isNative && (
+            {started && !failed && (
               <video
                 ref={videoRef}
                 className="featured-video"
                 src={videoSrc}
                 muted
+                loop
                 playsInline
-                preload={phase === 'video' ? 'auto' : 'metadata'}
-                onClick={() => playWithSound().catch(() => {})}
-                onEnded={restartVideo}
-                onError={() => { if (videoSrc !== FEATURED_VIDEO) setUseDefault(true); else setVideoOk(false) }}
+                preload="auto"
+                onPlaying={() => setPlaying(true)}
+                onPause={() => setPlaying(false)}
+                onError={() => { if (videoSrc !== FEATURED_VIDEO) setUseDefault(true); else setFailed(true) }}
               />
             )}
-            {hasVideo && (
+            {started && !failed && playing && (
               <span className="mute-btn" role="button" tabIndex={0}
-                aria-label={soundOn ? 'Sound on' : 'Sound off'}
-                title={soundOn ? t('Sound on') : t('Sound off')}
+                aria-label={muted ? 'Sound off' : 'Sound on'}
+                title={muted ? t('Sound off') : t('Sound on')}
                 onClick={toggleMute}>
-                {soundOn ? <VolumeUp size={15} /> : <VolumeMute size={15} />}
+                {muted ? <VolumeMute size={15} /> : <VolumeUp size={15} />}
               </span>
             )}
             <span className="zoom-btn" role="button" tabIndex={0} aria-label="View larger image"

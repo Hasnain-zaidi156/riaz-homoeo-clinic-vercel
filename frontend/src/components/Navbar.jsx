@@ -11,7 +11,6 @@ const DESKTOP = [
   ['/products/dxn', 'DXN Products'],
   ['/products/clinic', 'Clinic Products'],
   ['/gallery', 'Gallery'],
-  ['/videos', 'Videos'],
   ['/certificates', 'Certificates'],
   ['/contact', 'Contact'],
 ]
@@ -21,7 +20,6 @@ const MOBILE = [
   ['/products/dxn', 'DXN Products'],
   ['/products/clinic', 'Clinic Products'],
   ['/gallery', 'Gallery'],
-  ['/videos', 'Videos'],
   ['/certificates', 'Certificates'],
   ['/contact', 'Contact'],
 ]

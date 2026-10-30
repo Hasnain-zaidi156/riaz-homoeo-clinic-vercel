@@ -5,7 +5,7 @@ import MediaPicker from './MediaPicker'
 import { assetUrl } from '../../lib/config'
 
 const imgsOf = p => (p.imgs?.length ? p.imgs : p.img ? [p.img] : [])
-const BLANK = { name: '', nameUr: '', desc: '', descUr: '', price: '', cat: 'clinic', stock: true, imgs: [], video: '' }
+const BLANK = { name: '', nameUr: '', desc: '', descUr: '', price: '', cat: 'clinic', stock: true, imgs: [] }
 
 function ProductForm({ product, api, media, reloadMedia, onSaved, onClose }) {
   const toast = useToast()
@@ -22,7 +22,7 @@ function ProductForm({ product, api, media, reloadMedia, onSaved, onClose }) {
     e.preventDefault()
     if (!f.name.trim()) return toast('Product name is required', 'err')
     if (f.price === '' || Number(f.price) < 0) return toast('Enter a valid price', 'err')
-    const body = { name: f.name.trim(), nameUr: f.nameUr.trim(), desc: f.desc, descUr: f.descUr, price: Number(f.price), cat: f.cat, stock: f.stock, video: f.video.trim(), imgs: f.imgs, img: f.imgs[0] || '' }
+    const body = { name: f.name.trim(), nameUr: f.nameUr.trim(), desc: f.desc, descUr: f.descUr, price: Number(f.price), cat: f.cat, stock: f.stock, imgs: f.imgs, img: f.imgs[0] || '' }
     setBusy(true)
     try {
       const r = product ? await api('admin/products/' + product._id, 'PUT', body) : await api('admin/products', 'POST', body)
@@ -56,7 +56,6 @@ function ProductForm({ product, api, media, reloadMedia, onSaved, onClose }) {
             <button type="button" className="adm-btn" onClick={addUrl}>Add link</button>
           </div>
         </div>
-        <label className="full">Video link <small className="adm-muted">Optional. Main (featured) product par chalti hai: .mp4 ya YouTube/ScreenPal link</small><input className="adm-input" value={f.video} onChange={set('video')} /></label>
         <div className="full"><Switch checked={f.stock} onChange={v => setF(s => ({ ...s, stock: v }))} label={f.stock ? 'In stock' : 'Out of stock'} /></div>
       </form>
       {picker && <MediaPicker mode="pick" media={media} api={api} onChanged={reloadMedia} onClose={() => setPicker(false)} onPick={addImgs} />}

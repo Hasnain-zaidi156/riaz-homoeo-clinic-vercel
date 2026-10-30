@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { assetUrl } from '../../lib/config'
-import { Bag, Comment, ImageIcon, Package, Plus, Search, Trash, Eye, EyeOff, Play } from '../../components/Icons'
+import { Bag, Comment, ImageIcon, Package, Plus, Search, Trash, Eye, EyeOff } from '../../components/Icons'
 import Receipt, { RECEIPT_DELIVERY } from './Receipt'
 import { Badge, Empty, Loading, Switch, money, niceDate, useConfirm, useToast } from './ui'
 
@@ -177,18 +177,9 @@ export function GalleryView({ d, api, patchMedia, reload, addImages }) {
       </div>
       {rows.length === 0 ? <Empty icon={<ImageIcon size={22} />} title="No images yet" text="Upload images with the + button. They show in the website gallery." /> : (
         <div className="adm-media-grid">{rows.map(m => (
-          <div key={m._id} className={`adm-media${m.show ? '' : ' off'}${m.isVideo ? ' video-item' : ''}`}>
+          <div key={m._id} className={`adm-media${m.show ? '' : ' off'}`}>
             <div className="adm-media-img">
-              {m.isVideo ? (
-                <div style={{ position: 'relative', width: '100%', height: '100%', background: '#000' }}>
-                  <video src={assetUrl(m.url)} preload="metadata" playsInline webkitPlaysInline style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                  <div style={{ position: 'absolute', bottom: 6, left: 6, background: 'rgba(0,0,0,0.7)', color: '#fff', padding: '2px 6px', borderRadius: 4, fontSize: '0.7rem', zIndex: 5 }}>
-                    <Play size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} /> Video
-                  </div>
-                </div>
-              ) : (
                 <img src={assetUrl(m.url)} alt={m.alt} loading="lazy" />
-              )}
               <Badge tone={m.show ? 'ok' : 'neutral'}>{m.show ? 'On website' : 'Hidden'}</Badge></div>
             <input className="adm-input" defaultValue={m.alt} onBlur={e => saveAlt(m, e.target.value.trim())} onKeyDown={e => e.key === 'Enter' && e.target.blur()} placeholder="Caption" aria-label="Caption" />
             <div className="adm-media-actions">
@@ -210,24 +201,12 @@ const SITE_IMGS = [
 ]
 export function SiteImages({ site, api, setSite, onPick }) {
   const toast = useToast()
-  const [txt, setTxt] = useState({ phone1: '', phone2: '', email: '', address: '', aboutText: '' })
-  useEffect(() => {
-    setTxt({ phone1: site?.phone1 || '', phone2: site?.phone2 || '', email: site?.email || '', address: site?.address || '', aboutText: site?.aboutText || '' })
-  }, [site])
   const save = async (key, url) => {
     try {
       const r = await api('admin/settings', 'PUT', { [key]: url })
       if (r.error) throw new Error(r.error)
       setSite(r); toast(url ? 'Image updated on the website' : 'Restored the default image')
     } catch { toast('Could not update the image', 'err') }
-  }
-  const saveText = async e => {
-    e.preventDefault()
-    try {
-      const r = await api('admin/settings', 'PUT', { phone1: txt.phone1, phone2: txt.phone2, email: txt.email, address: txt.address, aboutText: txt.aboutText })
-      if (r.error) throw new Error(r.error)
-      setSite(r); toast('Site text and contact details updated')
-    } catch { toast('Could not update the site text', 'err') }
   }
   return (
     <>
@@ -247,17 +226,6 @@ export function SiteImages({ site, api, setSite, onPick }) {
             </div>)
         })}
       </div>
-    </div>
-    <div className="adm-card">
-      <div className="adm-card-head"><h3>Site text &amp; contact</h3><span className="adm-muted">Phone numbers, email, address and About the Doctor text shown on the website</span></div>
-      <form className="adm-form" onSubmit={saveText}>
-        <label>Phone 1<input className="adm-input" value={txt.phone1} onChange={e => setTxt(s => ({ ...s, phone1: e.target.value }))} placeholder="0333-7189748" /></label>
-        <label>Phone 2<input className="adm-input" value={txt.phone2} onChange={e => setTxt(s => ({ ...s, phone2: e.target.value }))} placeholder="0312-3875580" /></label>
-        <label>Email<input className="adm-input" value={txt.email} onChange={e => setTxt(s => ({ ...s, email: e.target.value }))} placeholder="Email address" /></label>
-        <label className="full">Address<textarea className="adm-input" rows={2} value={txt.address} onChange={e => setTxt(s => ({ ...s, address: e.target.value }))} placeholder="Clinic address" /></label>
-        <label className="full">About the Doctor text<textarea className="adm-input" rows={8} value={txt.aboutText} onChange={e => setTxt(s => ({ ...s, aboutText: e.target.value }))} placeholder="Dr. Syed Fawad Ahmed Zaidi ki bayani..." /></label>
-        <div className="full"><button className="adm-btn primary" type="submit">Save site text</button></div>
-      </form>
     </div>
     </>
   )

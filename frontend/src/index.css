@@ -244,9 +244,10 @@ textarea.input-field{border-radius:1.2rem;resize:vertical}
 .modal-input::placeholder{color:rgba(255,255,255,.4)}
 textarea.modal-input{border-radius:1rem;resize:none}
 .modal-skip-btn{background:none;border:none;color:rgba(255,255,255,.5);font-size:.75rem;cursor:pointer;width:100%;margin-top:.6rem;padding:.4rem;text-decoration:underline}
-.lightbox-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:.3s;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);padding:1rem}
+.lightbox-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:2000;display:flex;flex-direction:column;gap:.8rem;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:.3s;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);padding:1rem}
 .lightbox-overlay.open{opacity:1;visibility:visible}
 .lightbox-img{max-width:92vw;max-height:86vh;object-fit:contain;border-radius:1rem;border:2px solid rgba(var(--acc),.4)}
+.lightbox-caption{color:#fff;text-align:center;font-size:.95rem;max-width:92vw;padding:.35rem .9rem;word-break:break-word}
 .lightbox-close{position:absolute;top:1rem;right:1rem;background:var(--glass-strong);border:1px solid var(--glass-border);color:#fff;width:42px;height:42px;border-radius:50%;font-size:1.1rem;cursor:pointer;z-index:2001}
 
 /* ---------- FOOTER ---------- */
