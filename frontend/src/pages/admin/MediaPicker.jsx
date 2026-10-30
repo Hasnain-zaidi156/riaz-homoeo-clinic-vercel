@@ -4,11 +4,16 @@ import { Check, ImageIcon, Upload } from '../../components/Icons'
 import { Modal, Loading, useToast } from './ui'
 
 /* Image ko upload se pehle chhota karta hai (max 1600px) taake website tez rahe */
-const MAX_SIDE = 1600, MAX_BYTES = 3 * 1024 * 1024 /* Vercel request limit 4.5MB hai (base64 ~33% bara hota hai) */
+const MAX_SIDE = 1600, MAX_IMAGE_BYTES = 3 * 1024 * 1024, MAX_VIDEO_BYTES = 50 * 1024 * 1024 /* Vercel request limit 4.5MB hai (base64 ~33% bara hota hai) */
 const readAsDataUrl = f => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(f) })
 async function prepare(file) {
+  const isVideo = file.type.startsWith('video/')
+  if (isVideo) {
+    if (file.size > MAX_VIDEO_BYTES) throw new Error('Video is too large (max 50 MB)')
+    return readAsDataUrl(file)
+  }
   if (file.type === 'image/gif') {
-    if (file.size > MAX_BYTES) throw new Error('GIF is too large (max 3 MB)')
+    if (file.size > MAX_IMAGE_BYTES) throw new Error('GIF is too large (max 3 MB)')
     return readAsDataUrl(file)
   }
   const bmp = await createImageBitmap(file)
@@ -20,7 +25,7 @@ async function prepare(file) {
   if (!png) { g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height) }
   g.drawImage(bmp, 0, 0, c.width, c.height)
   let out = c.toDataURL(png ? 'image/png' : 'image/jpeg', 0.86)
-  if (out.length * 0.75 > MAX_BYTES) { // bari PNG → JPEG
+  if (out.length * 0.75 > MAX_IMAGE_BYTES) { // bari PNG → JPEG
     g.globalCompositeOperation = 'destination-over'; g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height)
     out = c.toDataURL('image/jpeg', 0.82)
   }
@@ -43,9 +48,9 @@ export default function MediaPicker({ mode = 'publish', single = false, media, a
   const patchQ = (key, p) => setQueue(q => q.map(x => x.key === key ? { ...x, ...p } : x))
 
   const upload = async files => {
-    const list = [...files].filter(f => /^image\/(jpeg|png|webp|gif)$/.test(f.type))
-    if (!list.length) { toast('Choose JPG, PNG, WEBP or GIF images', 'err'); return }
-    const rows = list.map(f => ({ key: Math.random().toString(36).slice(2), name: f.name, state: 'wait', preview: URL.createObjectURL(f), file: f }))
+    const list = [...files].filter(f => /^(image\/(jpeg|png|webp|gif)|video\/(mp4|webm|ogg|quicktime))$/.test(f.type))
+    if (!list.length) { toast('Choose JPG, PNG, WEBP, GIF images or MP4, WEBM, OGG videos', 'err'); return }
+    const rows = list.map(f => ({ key: Math.random().toString(36).slice(2), name: f.name, state: 'wait', preview: URL.createObjectURL(f), file: f, isVideo: f.type.startsWith('video/') }))
     setQueue(q => [...rows, ...q]); setBusy(true)
     for (const r of rows) {
       patchQ(r.key, { state: 'up' })
@@ -104,9 +109,9 @@ export default function MediaPicker({ mode = 'publish', single = false, media, a
           onDragOver={e => { e.preventDefault(); setDrag(true) }} onDragLeave={() => setDrag(false)}
           onDrop={e => { e.preventDefault(); setDrag(false); upload(e.dataTransfer.files) }}>
           <Upload size={26} />
-          <strong>Drop images here or click to browse</strong>
-          <span>JPG, PNG, WEBP or GIF. {publish ? 'They appear in the website gallery right away.' : 'They are saved to the gallery library and added to this product.'}</span>
-          <input ref={input} type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple hidden
+          <strong>Drop images or videos here or click to browse</strong>
+          <span>JPG, PNG, WEBP, GIF images or MP4, WEBM, OGG videos. {publish ? 'They appear in the website gallery right away.' : 'They are saved to the gallery library and added to this product.'}</span>
+          <input ref={input} type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/ogg" multiple hidden
             onChange={e => { upload(e.target.files); e.target.value = '' }} />
         </div>
         {queue.length > 0 && (

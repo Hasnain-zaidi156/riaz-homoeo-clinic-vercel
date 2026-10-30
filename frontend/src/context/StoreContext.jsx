@@ -125,7 +125,7 @@ export function StoreProvider({ children }) {
     products, status, cart, cartCount, subtotal, cartOpen, info, infoOpen, lightbox, settings, sending,
     addToCart, changeQty, removeItem, checkout, openWA,
     openCart: () => setCartOpen(true), closeCart: () => setCartOpen(false),
-    openLightbox: (src, alt) => setLightbox({ src, alt }), closeLightbox: () => setLightbox(null),
+    openLightbox: (src, alt, isVideo = false) => setLightbox({ src, alt, isVideo }), closeLightbox: () => setLightbox(null),
     openInfoModal, saveInfo, skipInfo,
   }
   return <Ctx.Provider value={value}>{children}<Loader /></Ctx.Provider>

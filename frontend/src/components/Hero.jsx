@@ -6,7 +6,7 @@ import { Star4 } from './Icons'
 function Person({ src, alt, name, small }) {
   return (
     <div className="hero-person-wrap glass">
-      {src && <img src={src} alt={alt} className="hero-doctor-img" fetchPriority="high" decoding="async" />}
+      {src && <img src={src} alt={alt} className="hero-doctor-img" fetchpriority="high" decoding="async" />}
       <p className="hero-person-name">{name}{small && <><br /><small>{small}</small></>}</p>
     </div>
   )

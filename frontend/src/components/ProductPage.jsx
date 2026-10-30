@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { useEffect, useRef, useState } from 'react'
 import { useLang } from '../context/LangContext'
 import { useStore } from '../context/StoreContext'
 import { DELIVERY, WA_ICON, WA_NUMBER } from '../lib/config'
-import { goBackOrHome, parseProductId, usePath } from '../lib/router'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import ProductCard from './ProductCard'
 import { CartPlus, ChevronLeft, Expand } from './Icons'
 
@@ -11,35 +11,40 @@ import { CartPlus, ChevronLeft, Expand } from './Icons'
    Data StoreContext se aata hai jo har page load par DB (/api/products) se taaza fetch hota hai,
    isliye admin ke edits yahan bhi nazar aate hain. Portal => home page ke upar full-screen page. */
 export default function ProductPage() {
-  const path = usePath()
-  const id = parseProductId(path)
+  const { id } = useParams()
+  const navigate = useNavigate()
   const { products, status, addToCart, openCart, cartCount, openLightbox, lightbox, cartOpen } = useStore()
   const { t, pick } = useLang()
   const [idx, setIdx] = useState(0)
   const scroller = useRef(null)
-  const p = id != null ? products.find(x => x.id === id) : null
+  /* URL: /product/65-power-x-neuro-drops => sirf shuru ka number (id) lo, slug ignore */
+  const pid = /^\d+/.test(id || '') ? parseInt(id, 10) : null
+  const p = pid != null ? products.find(x => x.id === pid) : null
 
-  useEffect(() => { setIdx(0); scroller.current && scroller.current.scrollTo(0, 0) }, [id])
+  useEffect(() => { setIdx(0); scroller.current && scroller.current.scrollTo(0, 0) }, [pid])
 
   useEffect(() => {
-    if (id == null) return
+    if (pid == null) return
     const prev = document.title
     if (p) document.title = `${p.name} | Riaz Homoeo Clinic`
     return () => { document.title = prev }
-  }, [id, p])
+  }, [pid, p])
+
+  const listPath = p && p.cat === 'dxn' ? '/products/dxn' : '/products/clinic'
+  const goBackOrHome = () => navigate(listPath, { replace: true })
 
   useEffect(() => {
-    if (id == null) return
+    if (pid == null) return
     const onKey = e => { if (e.key === 'Escape' && !lightbox && !cartOpen) goBackOrHome() }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
-  }, [id, lightbox, cartOpen])
+  }, [pid, lightbox, cartOpen])
 
-  if (id == null) return null
+  if (pid == null) return null
 
   const imgs = p ? (p.imgs && p.imgs.length ? p.imgs : (p.img ? [p.img] : [])) : []
   const inStock = p && p.stock !== false
-  const catLabel = t('Clinic')
+  const catLabel = p && p.cat === 'dxn' ? t('DXN Range') : t('Clinic Range')
   const related = p ? products.filter(x => x.cat === p.cat && x.id !== p.id).slice(0, 4) : []
 
   return createPortal(
@@ -63,8 +68,8 @@ export default function ProductPage() {
 
         {p && <>
           <nav className="pd-crumbs" aria-label="Breadcrumb">
-            <a href="/" onClick={e => { e.preventDefault(); goBackOrHome() }}>{t('Home')}</a><span>/</span>
-            <span>{catLabel}</span><span>/</span><b>{pick(p, 'name')}</b>
+            <Link to="/">{t('Home')}</Link><span>/</span>
+            <Link to={listPath}>{catLabel}</Link><span>/</span><b>{pick(p, 'name')}</b>
           </nav>
 
           <div className="pd-card glass">

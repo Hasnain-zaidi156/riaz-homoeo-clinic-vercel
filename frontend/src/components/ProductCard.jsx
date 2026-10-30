@@ -3,15 +3,16 @@ import { useStore } from '../context/StoreContext'
 import ImageSlider from './ImageSlider'
 import ExpandableText from './ExpandableText'
 import { CartPlus } from './Icons'
-import { navigate, productPath } from '../lib/router'
+import { Link, useNavigate } from 'react-router-dom'
 
 export default function ProductCard({ p, eager = false, reveal = false, delay = 0 }) {
   const { addToCart } = useStore()
   const { t, pick } = useLang()
+  const navigate = useNavigate()
   const list = p.imgs && p.imgs.length ? p.imgs : (p.img ? [p.img] : [])
   /* Stock: DB field `stock` — admin toggle. Default true (purane products). */
   const inStock = p.stock !== false
-  const href = productPath(p)
+  const href = `/product/${p.id}${pick(p, 'name') ? '-' + String(pick(p, 'name')).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) : ''}`
   /* Card/image/name click => product details page. Buttons, slider controls, links, See More ignore. */
   const open = e => {
     if (e.target.closest('button, a, .sdot, .expandable')) return
@@ -31,10 +32,10 @@ export default function ProductCard({ p, eager = false, reveal = false, delay = 
         {list.length > 1
           ? <ImageSlider images={list} alt={p.name} eager={eager} />
           : <img src={list[0] || ''} alt={p.name} loading={eager ? 'eager' : 'lazy'} decoding="async" className="single-img" />}
-        <span className="product-cat-label">{t('Clinic')}</span>
+        <span className="product-cat-label">{p.cat === 'dxn' ? t('DXN Range') : t('Clinic Range')}</span>
       </div>
       <div className="product-info">
-        <h4><a href={href} onClick={openLink} className="product-link">{pick(p, 'name')}</a></h4>
+        <h4><Link to={href} onClick={openLink} className="product-link">{pick(p, 'name')}</Link></h4>
         <ExpandableText className="product-desc" text={pick(p, 'desc')} lines={4} />
         <div className="product-price">PKR {p.price}</div>
         {inStock

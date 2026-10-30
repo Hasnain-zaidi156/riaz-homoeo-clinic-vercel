@@ -3,9 +3,28 @@ import { useState } from 'react'
 import { useStore } from '../context/StoreContext'
 import { FB_URL, WA_ICON, WA_NUMBER, assetUrl } from '../lib/config'
 import { WhatsApp, Facebook, CartPlus } from './Icons'
+import { Link } from 'react-router-dom'
 
-const DESKTOP = [['about', 'About'], ['products', 'Products'], ['gallery', 'Gallery'], ['comments', 'Comments'], ['location', 'Location'], ['order', 'Order']]
-const MOBILE = [['about', 'About Doctor'], ['products', 'Products'], ['gallery', 'Gallery'], ['comments', 'Comments'], ['location', 'Location'], ['order', 'Order']]
+const DESKTOP = [
+  ['/', 'Home'],
+  ['/about', 'About the Doctor'],
+  ['/products/dxn', 'DXN Products'],
+  ['/products/clinic', 'Clinic Products'],
+  ['/gallery', 'Gallery'],
+  ['/videos', 'Videos'],
+  ['/certificates', 'Certificates'],
+  ['/contact', 'Contact'],
+]
+const MOBILE = [
+  ['/', 'Home'],
+  ['/about', 'About the Doctor'],
+  ['/products/dxn', 'DXN Products'],
+  ['/products/clinic', 'Clinic Products'],
+  ['/gallery', 'Gallery'],
+  ['/videos', 'Videos'],
+  ['/certificates', 'Certificates'],
+  ['/contact', 'Contact'],
+]
 
 export default function Navbar() {
   const { cartCount, openCart, settings } = useStore()
@@ -15,12 +34,14 @@ export default function Navbar() {
   return (
     <nav>
       <div className="nav-container">
-        <a href="#" className="logo">
+        <Link to="/" className="logo">
           {settings && <img src={assetUrl(settings.logoImg || 'https://i.ibb.co/Q7NhK34X/logo.jpg')} alt={settings.logoImg ? 'Clinic logo' : 'Dr. Fawad'} className="logo-img-circle" />}
           <div className="logo-text"><h2>{t('Riaz Homoeo Clinic')}</h2><p>{t('Rohri · Sindh')}</p><div className="logo-since">{t('Est. Since 1967')}</div></div>
-        </a>
+        </Link>
         <div className="nav-links">
-          {DESKTOP.map(([id, label]) => <a key={id} href={`#${id}`}>{t(label)}</a>)}
+          {DESKTOP.map(([id, label]) => (
+            <Link key={id} to={id} className="nav-link">{t(label)}</Link>
+          ))}
           <a href={FB_URL} target="_blank" rel="noreferrer" className="fb-link"><Facebook size={13} /> {t('Facebook')}</a>
         </div>
         <div className="nav-right">
@@ -34,7 +55,9 @@ export default function Navbar() {
         </div>
       </div>
       <div className={`mobile-menu${open ? ' show' : ''}`}>
-        {MOBILE.map(([id, label]) => <a key={id} href={`#${id}`} onClick={() => setOpen(false)}>{t(label)}</a>)}
+        {MOBILE.map(([id, label]) => (
+          <Link key={id} to={id} onClick={() => setOpen(false)} className="mobile-link">{t(label)}</Link>
+        ))}
         <a href={`https://wa.me/${WA_NUMBER}`} target="_blank" rel="noreferrer"><WhatsApp size={16} color="#25D366" /> {t('WhatsApp Order')}</a>
         <a href={FB_URL} target="_blank" rel="noreferrer"><Facebook size={16} color="#8db4ff" /> {t('Facebook')}</a>
       </div>

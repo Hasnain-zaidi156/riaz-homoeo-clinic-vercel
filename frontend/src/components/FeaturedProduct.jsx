@@ -4,8 +4,9 @@ import { useStore } from '../context/StoreContext'
 import { FEATURED_VIDEO, THUMB_SECONDS, EMBED_SECONDS } from '../config/featuredVideo'
 import { WA_ICON, WA_NUMBER } from '../lib/config'
 import ExpandableText from './ExpandableText'
-import { navigate, productPath } from '../lib/router'
+import { productPath } from '../lib/router'
 import { Star, CartPlus, VolumeUp, VolumeMute, Expand } from './Icons'
+import { Link, useNavigate } from 'react-router-dom'
 
 /* Online player links (iframe) vs local .mp4 (native video) */
 const isEmbed = url =>
@@ -28,6 +29,7 @@ const embedUrl = url => {
 export default function FeaturedProduct() {
   const { products, addToCart, openLightbox } = useStore()
   const { t, pick } = useLang()
+  const navigate = useNavigate()
   const videoRef = useRef(null)
   /* thumb = shuru ki thumbnail | video = video chal rahi hai */
   const [phase, setPhase] = useState('thumb')
@@ -75,7 +77,7 @@ export default function FeaturedProduct() {
     if (phase !== 'video' || !isNative) return
     const v = videoRef.current; if (!v) return
     v.currentTime = 0
-    playWithSound().catch(() => {})
+    v.pause()
   }, [phase, isNative, videoSrc])
 
   /* ---------- 3) Native: video khatam = turant wapas shuru (bina 4 sec gap) ---------- */
@@ -170,6 +172,7 @@ export default function FeaturedProduct() {
                 muted
                 playsInline
                 preload={phase === 'video' ? 'auto' : 'metadata'}
+                onClick={() => playWithSound().catch(() => {})}
                 onEnded={restartVideo}
                 onError={() => { if (videoSrc !== FEATURED_VIDEO) setUseDefault(true); else setVideoOk(false) }}
               />
@@ -189,13 +192,13 @@ export default function FeaturedProduct() {
           </div>
           <div className="featured-info">
             <div className="badge"><Star size={14} /> {t('Featured Product')}</div>
-            <h2 className="section-title"><a href={productPath(p)} className="product-link" onClick={e => { if (e.metaKey || e.ctrlKey || e.shiftKey) return; e.preventDefault(); navigate(productPath(p)) }}>{pick(p, 'name')}</a></h2>
+            <h2 className="section-title"><Link to={productPath(p)} className="product-link" onClick={e => { if (e.metaKey || e.ctrlKey || e.shiftKey) return; e.preventDefault(); navigate(productPath(p)) }}>{pick(p, 'name')}</Link></h2>
             <div className="divider-line" />
             <ExpandableText className="section-desc" text={pick(p, 'desc')} lines={4} />
             <div className="featured-price">PKR {p.price}<small>{t('+ delivery')}</small></div>
             <div className="featured-btns">
               <button className="btn-primary" onClick={() => addToCart(p.id)}><CartPlus size={14} /> {t('Add to Cart')}</button>
-              <a className="btn-outline" href={productPath(p)} onClick={e => { if (e.metaKey || e.ctrlKey || e.shiftKey) return; e.preventDefault(); navigate(productPath(p)) }}>{t('View Details')}</a>
+              <Link className="btn-outline" to={productPath(p)} onClick={e => { if (e.metaKey || e.ctrlKey || e.shiftKey) return; e.preventDefault(); navigate(productPath(p)) }}>{t('View Details')}</Link>
               <a className="btn-primary btn-wa" target="_blank" rel="noopener noreferrer"
                 href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`Assalamu Alaikum, I need order: ${p.name} (PKR ${p.price})`)}`}>
                 <img src={WA_ICON} alt="" className="visit" /> {t('Order on WhatsApp')}
