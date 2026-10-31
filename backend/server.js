@@ -10,6 +10,8 @@ const S=o=>new mongoose.Schema(o,{timestamps:true});
 const P=mongoose.model('Product',S({id:Number,cat:String,name:String,nameUr:String,desc:String,descUr:String,price:Number,img:String,imgs:[String],stock:{type:Boolean,default:true}}));
 const O=mongoose.model('Order',S({name:String,phone:String,address:String,items:[{name:String,qty:Number,price:Number}],subtotal:Number,delivery:Number,total:Number,status:{type:String,default:'new'}}));
 const A=mongoose.model('Appointment',S({name:String,phone:String,date:String,token:Number,note:String,status:{type:String,default:'booked'}}));
+/* Patient records: sirf admin panel ke liye (website par kahin show nahi hota, public API mein koi route nahi) */
+const PT=mongoose.model('Patient',(()=>{const sc=S({name:{type:String,required:true,trim:true,maxlength:80},cardNo:{type:String,required:true,trim:true,maxlength:40},city:{type:String,required:true,trim:true,maxlength:60}});sc.index({createdAt:-1});sc.index({cardNo:1});sc.index({name:1});sc.index({city:1});return sc})());
 const ST=mongoose.model('Setting',S({site:{type:String,default:'site',unique:true},logoImg:String,doctorLeftImg:String,doctorRightImg:String,doctorAboutImg:String,aboutSeed:Boolean,priceSeed:Boolean,phone1:String,phone2:String,email:String,address:String,aboutText:String,altSeed:Boolean}));
 /* Media library: website gallery + admin uploads. Image ya to external URL (src) hoti hai ya DB mein (data) save hoti hai.
    show=true => website ki Gallery mein nazar aati hai. */
@@ -77,6 +79,35 @@ r.get('/orders',ah(async(q,s)=>s.json(await O.find().sort('-createdAt').limit(20
 r.patch('/orders/:id',upd(O));
 r.get('/appointments',ah(async(q,s)=>s.json(await A.find().sort('-date token').limit(300))));
 r.patch('/appointments/:id',upd(A));
+/* ---- Patient records (admin only; r = auth router, /api/admin/patients) ---- */
+const esc=x=>String(x).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+const ptClean=b=>({name:String(b&&b.name||'').trim().replace(/\s+/g,' ').slice(0,80),cardNo:String(b&&b.cardNo||'').trim().slice(0,40),city:String(b&&b.city||'').trim().slice(0,60)});
+r.get('/patients',ah(async(q,s)=>{
+  /* Search: name / city / card number — space se alag alfaaz sab match hon (jaise "ali sukkur") */
+  const toks=String(q.query.q||'').trim().split(/\s+/).filter(Boolean).slice(0,6);
+  const f=toks.length?{$and:toks.map(t=>{const re=new RegExp(esc(t),'i');return{$or:[{name:re},{city:re},{cardNo:re}]}})}:{};
+  const limit=Math.min(Math.max(parseInt(q.query.limit)||50,1),100),skip=Math.max(parseInt(q.query.skip)||0,0);
+  const[rows,total]=await Promise.all([PT.find(f).sort('-createdAt').skip(skip).limit(limit).lean(),PT.countDocuments(f)]);
+  s.json({rows,total});
+}));
+r.post('/patients',ah(async(q,s)=>{
+  const d=ptClean(q.body);
+  if(!d.name||!d.cardNo||!d.city)return s.status(400).json({error:'Name, card number aur city teeno zaroori hain'});
+  if(!q.body.force){const dup=await PT.findOne({cardNo:new RegExp('^'+esc(d.cardNo)+'$','i')}).lean();
+    if(dup)return s.status(409).json({error:'duplicate',existing:{name:dup.name,city:dup.city,cardNo:dup.cardNo}})}
+  s.json(await PT.create(d));
+}));
+r.put('/patients/:id',ah(async(q,s)=>{
+  if(!mongoose.isValidObjectId(q.params.id))return s.sendStatus(404);
+  const d=ptClean(q.body);
+  if(!d.name||!d.cardNo||!d.city)return s.status(400).json({error:'Name, card number aur city teeno zaroori hain'});
+  const row=await PT.findByIdAndUpdate(q.params.id,d,{new:true});
+  row?s.json(row):s.sendStatus(404);
+}));
+r.delete('/patients/:id',ah(async(q,s)=>{
+  if(!mongoose.isValidObjectId(q.params.id))return s.sendStatus(404);
+  await PT.findByIdAndDelete(q.params.id);s.json({ok:1});
+}));
 r.post('/products',ah(async(q,s)=>{const l=await P.findOne().sort('-id');s.json(await P.create({...q.body,id:(l?l.id:0)+1}))}));
 r.put('/products/:id',ah(async(q,s)=>s.json(await P.findByIdAndUpdate(q.params.id,q.body,{new:true}))));
 r.delete('/products/:id',ah(async(q,s)=>{await P.findByIdAndDelete(q.params.id);s.json({ok:1})}));

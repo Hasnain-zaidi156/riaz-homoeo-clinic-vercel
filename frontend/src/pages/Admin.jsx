@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { API } from '../lib/config'
-import { Bag, Comment, ExternalLink, Grid, ImageIcon, LogOut, Menu, Package, Plus } from '../components/Icons'
+import { Bag, Comment, ExternalLink, Grid, ImageIcon, LogOut, Menu, Package, Plus, Stethoscope } from '../components/Icons'
 import { ToastProvider, useToast } from './admin/ui'
 import MediaPicker from './admin/MediaPicker'
 import Products from './admin/Products'
 import { Comments, GalleryView, Orders, Overview, SiteImages } from './admin/Views'
+import Patients from './admin/Patients'
 import '../admin.css'
 
 const NAV = [
@@ -13,6 +14,7 @@ const NAV = [
   ['products', 'Products', Package, 'Prices, stock and product images'],
   ['comments', 'Comments', Comment, 'Everything visitors have written'],
   ['gallery', 'Gallery', ImageIcon, 'Images shown on the website'],
+  ['patients', 'Patient Records', Stethoscope, 'Name, card number and city — private, never shown on the website'],
 ]
 const ENDPOINT = { orders: 'admin/orders', products: 'products', comments: 'admin/comments', media: 'admin/media' }
 
@@ -103,6 +105,7 @@ function Panel({ token, logout }) {
           {tab === 'orders' && <Orders {...common} />}
           {tab === 'products' && <Products {...common} />}
           {tab === 'comments' && <Comments {...common} />}
+          {tab === 'patients' && <Patients api={api} />}
           {tab === 'gallery' && <>
             <SiteImages site={site} api={api} setSite={setSite} onPick={cb => setSitePick(() => cb)} />
             <GalleryView {...common} patchMedia={patchMedia} addImages={addImages} />

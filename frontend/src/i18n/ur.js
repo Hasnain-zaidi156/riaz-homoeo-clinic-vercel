@@ -46,6 +46,8 @@ export const ur = {
   'Clinic': 'کلینک', 'clinic': 'کلینک',
   'DXN Range': 'ڈی ایکس این رینج', 'Clinic Range': 'کلینک رینج',
   'Show {n} More Clinic Products': '{n} مزید کلینک مصنوعات دیکھیں',
+  'Show {n} More DXN Products': '{n} مزید ڈی ایکس این مصنوعات دیکھیں',
+  'dxn': 'ڈی ایکس این',
   'Showing': 'دکھائی گئیں', 'of': 'از', 'products': 'مصنوعات',
   'About Us': 'ہمارے بارے میں',
   'Contact Us': 'رابطہ کریں',

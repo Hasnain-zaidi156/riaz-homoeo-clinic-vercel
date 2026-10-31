@@ -30,8 +30,11 @@ export default function ProductPage() {
     return () => { document.title = prev }
   }, [pid, p])
 
-  const listPath = p && p.cat === 'dxn' ? '/products/dxn' : '/products/clinic'
-  const goBackOrHome = () => navigate(listPath, { replace: true })
+  const sectionId = p && p.cat === 'dxn' ? 'dxn-products' : 'clinic-products'
+  const goBackOrHome = () => {
+    navigate('/', { replace: true })
+    setTimeout(() => { const el = document.getElementById(sectionId); if (el) el.scrollIntoView({ block: 'start' }) }, 250)
+  }
 
   useEffect(() => {
     if (pid == null) return
@@ -69,7 +72,7 @@ export default function ProductPage() {
         {p && <>
           <nav className="pd-crumbs" aria-label="Breadcrumb">
             <Link to="/">{t('Home')}</Link><span>/</span>
-            <Link to={listPath}>{catLabel}</Link><span>/</span><b>{pick(p, 'name')}</b>
+            <a href="/" onClick={e => { e.preventDefault(); goBackOrHome() }}>{catLabel}</a><span>/</span><b>{pick(p, 'name')}</b>
           </nav>
 
           <div className="pd-card glass">

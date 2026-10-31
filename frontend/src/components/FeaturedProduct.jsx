@@ -9,6 +9,12 @@ import { Link, useNavigate } from 'react-router-dom'
 
 const FEATURED_VIDEO = '/videos/featured-video.mp4'
 
+/* Ye 2 lines main product ki description se hamesha hata di jati hain (DB mein hon tab bhi) */
+const cleanDesc = txt => String(txt || '')
+  .replace(/a\s+legacy\s+of\s+homeo?pathic\s+care\s+since\s+1967\.?/gi, '')
+  .replace(/the\s+tradition\s+continues\s+with\s+dr\.?\s*syed\s+fawad\s+ahmed(\s+zaidi)?\.?/gi, '')
+  .replace(/\n\s*\n\s*\n+/g, '\n\n').trim()
+
 /* Featured (main) product.
    Video tab tak load/play NAHI hoti jab tak user scroll karke is product tak na pahunche.
    Pahunchne par muted chalti hai (loop), bahar jaye to pause. Sirf aik mute/unmute button. */
@@ -102,7 +108,7 @@ export default function FeaturedProduct() {
             <div className="badge"><Star size={14} /> {t('Featured Product')}</div>
             <h2 className="section-title"><Link to={productPath(p)} className="product-link" onClick={e => { if (e.metaKey || e.ctrlKey || e.shiftKey) return; e.preventDefault(); navigate(productPath(p)) }}>{pick(p, 'name')}</Link></h2>
             <div className="divider-line" />
-            <ExpandableText className="section-desc" text={pick(p, 'desc')} lines={4} />
+            <ExpandableText className="section-desc" text={cleanDesc(pick(p, 'desc'))} lines={4} />
             <div className="featured-price">PKR {p.price}<small>{t('+ delivery')}</small></div>
             <div className="featured-btns">
               <button className="btn-primary" onClick={() => addToCart(p.id)}><CartPlus size={14} /> {t('Add to Cart')}</button>
