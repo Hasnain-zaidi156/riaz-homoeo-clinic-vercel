@@ -1,7 +1,10 @@
 require('dotenv').config();
 const express=require('express'),mongoose=require('mongoose'),jwt=require('jsonwebtoken'),cors=require('cors'),path=require('path');
 if(!process.env.JWT_SECRET){console.error('Set JWT_SECRET in .env');process.exit(1)}
-const app=express();app.set('trust proxy',1);app.use('/api/admin/media',express.json({limit:'8mb'}));app.use(cors(process.env.CLIENT_URL?{origin:process.env.CLIENT_URL.split(',')}:undefined),express.json({limit:'1mb'}));
+const app=express();app.set('trust proxy',1);try{app.use(require('compression')())}catch{/* compression install nahi — chalta rahega */}
+/* Public data: browser/CDN thodi der cache karen + purana dikha kar background mein refresh (tez load) */
+const pub=(q,s,n)=>{s.set('Cache-Control','public, max-age=0, s-maxage=60, stale-while-revalidate=600');n()};
+app.use('/api/admin/media',express.json({limit:'8mb'}));app.use(cors(process.env.CLIENT_URL?{origin:process.env.CLIENT_URL.split(',')}:undefined),express.json({limit:'1mb'}));
 app.use((q,s,n)=>boot().then(()=>n(),e=>s.status(500).json({error:e.message})));/* Vercel: DB connect + seed pehle ho jaye */
 const S=o=>new mongoose.Schema(o,{timestamps:true});
 const P=mongoose.model('Product',S({id:Number,cat:String,name:String,nameUr:String,desc:String,descUr:String,price:Number,img:String,imgs:[String],stock:{type:Boolean,default:true}}));
@@ -18,8 +21,8 @@ const ok=(v,m=200)=>typeof v==='string'&&v.trim()&&v.length<=m;
 const auth=(q,s,n)=>{try{jwt.verify((q.headers.authorization||'').slice(7),process.env.JWT_SECRET);n()}catch{s.status(401).json({error:'Unauthorized'})}};
 
 app.get('/',(q,s)=>s.json({ok:true,service:'riaz-homoeo-clinic-api'}));
-app.get('/api/products',ah(async(q,s)=>s.json(await P.find().sort('id'))));
-app.get('/api/gallery',ah(async(q,s)=>{
+app.get('/api/products',pub,ah(async(q,s)=>s.json(await P.find().sort('id'))));
+app.get('/api/gallery',pub,ah(async(q,s)=>{
   const rows=await MD.find({show:{$ne:false},isVideo:{$ne:true}}).select('-data').sort('pos createdAt');
   s.json(rows.map(m=>({url:mediaUrl(m),alt:m.alt||'',name:m.name||'',isVideo:m.isVideo===true,contentType:m.contentType||''})));
 }));
@@ -31,7 +34,7 @@ app.get('/api/media/:id/file',ah(async(q,s)=>{
   s.set({'Content-Type':m.contentType||'image/jpeg','Cache-Control':'public, max-age=31536000, s-maxage=31536000, immutable','Cross-Origin-Resource-Policy':'cross-origin'});
   s.send(m.data);
 }));
-app.get('/api/settings',ah(async(q,s)=>s.json(await ST.findOne({site:'site'})||{site:'site'})));
+app.get('/api/settings',pub,ah(async(q,s)=>s.json(await ST.findOne({site:'site'})||{site:'site'})));
 /* Comments: ab product cards par nahi — website par ek alag (bulk) Comments section hai.
    Comment ka cid=0 => bulk section. Purane product comments DB mein rehte hain, sirf admin dekh/delete kar sakta hai. */
 const CM=mongoose.model('Comment',S({cid:Number,_id:Number,name:String,text:String}));

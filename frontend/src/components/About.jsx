@@ -12,9 +12,6 @@ const DEFAULT_ABOUT = [
   { text: "Carrying forward the tradition established by his father is an honour for Dr. Syed Fawad Ahmed Zaidi. To him, this legacy is more than a profession; it is a continuing journey of service to humanity, sincerity, and responsibility." },
   { sub: 'A Commitment to the Future', text: "Dr. Syed Fawad Ahmed Zaidi hopes this family tradition, begun by his respected father, will be passed on to future generations. He hopes it will continue through his son, and that the spirit of service to people will live on." },
   { text: "With a family medical tradition of about 60 years and nearly three decades of personal experience, Dr. Syed Fawad Ahmed Zaidi is committed to carrying his family's legacy forward." },
-  { text: "Dr. Syed Fawad Ahmed Zaidi provides premium homoeopathic treatments in Rohri, specializing in chronic diseases, Kidney, Liver diseases, Stones, Gallbladder, Warts & Skin growths, Hidden Male & Female diseases, Children diseases, immune support, and other diseases." },
-  { text: '· Contact before visiting the clinic to have medicine delivered to your home. This service is available for areas other than Rohri & Sukkur.' },
-  { text: '· All over Pakistan' },
 ]
 
 export default function About() {

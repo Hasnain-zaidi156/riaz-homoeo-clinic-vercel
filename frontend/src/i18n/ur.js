@@ -15,13 +15,9 @@ export const ur = {
   '30+ Years experience': '30 سال سے زائد تجربہ', 'Dhak Bazar, Rohri': 'ڈھک بازار، روہڑی',
   'Homoeopathy Specialist': 'ہومیوپیتھی ماہر', 'Book Consultation': 'مشورہ بک کریں',
   'Holistic Healing': 'مکمل شفا', 'Natural Medicine': 'قدرتی علاج', 'Trusted Since': 'بھروسے کا سفر، سن',
-  'Dr. Syed Fawad Ahmed Zaidi provides premium homoeopathic treatments in Rohri, specializing in chronic diseases, Kidney, Liver diseases, Stones, Gallbladder, Warts & Skin growths, Hidden Male & Female diseases, Children diseases, immune support, and other diseases.':
-    'ڈاکٹر سید فواد احمد زیدی روہڑی میں اعلیٰ معیار کا ہومیوپیتھک علاج فراہم کرتے ہیں، جن میں پرانے امراض، گردہ اور جگر کے امراض، پتھری، پتے کی تھیلی، مسّے اور جلد کی رسولیاں، مردانہ و زنانہ مخفی امراض، بچوں کے امراض، قوتِ مدافعت اور دیگر امراض شامل ہیں۔',
   '100% natural remedies': 'سو فیصد قدرتی ادویات',
-  '· Contact before visiting the clinic to have medicine delivered to your home. This service is available for areas other than Rohri & Sukkur.':
-    '· کلینک آنے سے پہلے رابطہ کریں تاکہ دوا آپ کے گھر پہنچائی جا سکے۔ یہ سہولت روہڑی اور سکھر کے علاوہ دیگر علاقوں کے لیے ہے۔',
 
-  '· All over Pakistan': '· پورے پاکستان میں', 'Follow on Facebook': 'فیس بک پر فالو کریں',
+  'Follow on Facebook': 'فیس بک پر فالو کریں',
   // About (doctor profile)
   'Homoeopathic Practitioner | Nearly Three Decades of Experience': 'ہومیوپیتھک معالج | تقریباً تین دہائیوں کا تجربہ',
   'A Family Tradition of Service': 'ایک خاندانی روایت، خدمت کی ایک تاریخ',

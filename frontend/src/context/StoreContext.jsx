@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { API, DELIVERY, WA_NUMBER, ORDER_WA_NUMBER, assetUrl } from '../lib/config'
 import Loader from '../components/Loader'
+import snapshot from '../data/snapshot.json'
 
 /* PIN_FIRST: jin products ko Clinic Range mein sab se pehle dikhana hai unki id.
    65 = Power-X Neuro Drops, 1000 = Featured (main) product */
@@ -25,6 +26,15 @@ async function getJSON(url, tries = 40, gap = 1500) {
 }
 const fixProduct = p => ({ ...p, img: assetUrl(p.img), imgs: Array.isArray(p.imgs) ? p.imgs.map(assetUrl) : p.imgs })
 
+/* Shuru ka data: 1) pichli dafa ka localStorage cache  2) build ke waqt code mein rakha snapshot (data/snapshot.json).
+   Is se pehli visit par bhi products/images foran dikhte hain — server (free Render) jaagne ka intezar nahi. API baad mein background mein update kar deti hai. */
+const readStart = () => {
+  const c = readCache()
+  if (c) return { products: c.products.map(fixProduct), settings: c.settings }
+  if (snapshot && Array.isArray(snapshot.products) && snapshot.products.length) return { products: pinFirst(snapshot.products.map(fixProduct)), settings: snapshot.settings || null }
+  return null
+}
+
 const INFO_KEY = 'rhc_customer_info'
 const readInfo = () => { try { const s = localStorage.getItem(INFO_KEY); return s ? JSON.parse(s) : null } catch { return null } }
 const writeInfo = i => { try { localStorage.setItem(INFO_KEY, JSON.stringify(i)) } catch { /* ignore */ } }
@@ -39,7 +49,7 @@ const Ctx = createContext(null)
 export const useStore = () => useContext(Ctx)
 
 export function StoreProvider({ children }) {
-  const [cache] = useState(readCache)
+  const [cache] = useState(readStart)
   const [products, setProducts] = useState(cache ? cache.products : [])
   const [status, setStatus] = useState(cache ? 'ready' : 'loading') // loading | ready | error
   const [cart, setCart] = useState([])

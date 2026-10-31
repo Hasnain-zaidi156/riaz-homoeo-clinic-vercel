@@ -73,3 +73,10 @@ Optional: UptimeRobot se har 5 minute `https://<render-url>/` ping karwayein to 
 - Speed fix (product page, See More, woff2 font, lazy/eager images) merge ho chuka hai; data cache (stale-while-revalidate) wapas hai.
 - Delivery 500 PKR (`frontend/src/lib/config.js`, `backend/server.js`, `pages/admin/Receipt.jsx`).
 - Admin > Orders: order par click karein => A4 raseed + Print button.
+
+## Images code mein (tez loading)
+`frontend/scripts/localize-images.mjs` live API se saari images (products, gallery, logo, doctor photos) download karke
+chhote WEBP mein `frontend/public/img/` mein rakhta hai aur `src/data/localImages.json` + `src/data/snapshot.json` likhta hai.
+- Build se pehle (`prebuild`) khud chalta hai — Vercel/Netlify par `VITE_API_BASE` set hona chahiye.
+- Hath se: `cd frontend && npm install && npm run images` phir `public/img` + `src/data/*.json` commit karein.
+- Admin se nayi image lagayen to dobara deploy karein (ya `npm run images`), warna wo purane tareeqe (DB) se load hogi.

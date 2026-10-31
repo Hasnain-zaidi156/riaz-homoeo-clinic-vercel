@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react'
 import { useLang } from '../context/LangContext'
 import { API, assetUrl } from '../lib/config'
 import { galleryImgs } from '../data/gallery'
+import snapshot from '../data/snapshot.json'
 
 /* Certificates page — sirf wo gallery items jin ka naam/alt mein 'Certificate' ho. */
 export default function Certificates() {
   const { t } = useLang()
-  const [items, setItems] = useState(null)
+  const [items, setItems] = useState(() => (snapshot && Array.isArray(snapshot.gallery) && snapshot.gallery.length ? snapshot.gallery : null))
 
   useEffect(() => {
     let alive = true

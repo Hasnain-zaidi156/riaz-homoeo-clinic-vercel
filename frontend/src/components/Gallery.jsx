@@ -3,6 +3,7 @@ import { useLang } from '../context/LangContext'
 import { useStore } from '../context/StoreContext'
 import { API, assetUrl } from '../lib/config'
 import { galleryImgs } from '../data/gallery'
+import snapshot from '../data/snapshot.json'
 
 /* Gallery ki images admin panel se manage hoti hain.
    Server na chale to data/gallery.js wali purani list dikhai jati hai.
@@ -11,7 +12,7 @@ import { galleryImgs } from '../data/gallery'
 export default function Gallery() {
   const { openLightbox } = useStore()
   const { t } = useLang()
-  const [items, setItems] = useState(null) // null = load ho rahi hai
+  const [items, setItems] = useState(() => (snapshot && Array.isArray(snapshot.gallery) && snapshot.gallery.length ? snapshot.gallery : null)) // null = load ho rahi hai
 
   useEffect(() => {
     let alive = true
