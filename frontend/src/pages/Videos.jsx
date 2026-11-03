@@ -25,7 +25,7 @@ export default function VideosPage() {
       <div className="container" style={{ textAlign: 'center' }}>
         <div className="badge">{t('Moments')}</div>
         <h2 className="section-title">{t('Videos')}</h2>
-        <p className="section-desc" style={{ maxWidth: '600px', margin: '0 auto 2rem' }}>{t('Clinic videos — tap kar ke play karein.')}</p>
+        <p className="section-desc" style={{ maxWidth: '600px', margin: '0 auto 2rem' }}>{t('Clinic videos — tap to play.')}</p>
         {videos.length === 0 ? (
           <p style={{ color: 'rgba(255,255,255,.6)', fontSize: '1rem' }}>{t('No videos available yet.')}</p>
         ) : (

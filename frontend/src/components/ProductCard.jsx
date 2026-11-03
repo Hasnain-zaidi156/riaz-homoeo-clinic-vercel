@@ -7,7 +7,7 @@ import { Link, useNavigate } from 'react-router-dom'
 
 export default function ProductCard({ p, eager = false, reveal = false, delay = 0 }) {
   const { addToCart } = useStore()
-  const { t, pick } = useLang()
+  const { t, pick, money } = useLang()
   const navigate = useNavigate()
   const list = p.imgs && p.imgs.length ? p.imgs : (p.img ? [p.img] : [])
   /* Stock: DB field `stock` — admin toggle. Default true (purane products). */
@@ -37,7 +37,7 @@ export default function ProductCard({ p, eager = false, reveal = false, delay = 
       <div className="product-info">
         <h4><Link to={href} onClick={openLink} className="product-link">{pick(p, 'name')}</Link></h4>
         <ExpandableText className="product-desc" text={pick(p, 'desc')} lines={4} />
-        <div className="product-price">PKR {p.price}</div>
+        <div className="product-price">{money(p.price)}</div>
         {inStock
           ? <button className="add-cart" onClick={() => addToCart(p.id)}><CartPlus size={14} /> {t('Add to Cart')}</button>
           : <button className="add-cart" disabled aria-disabled="true"><CartPlus size={14} /> {t('Out of Stock')}</button>}

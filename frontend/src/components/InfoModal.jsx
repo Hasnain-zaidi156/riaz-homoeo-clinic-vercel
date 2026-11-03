@@ -13,10 +13,10 @@ export default function InfoModal() {
     <div className={`info-modal-overlay${infoOpen ? ' open' : ''}`} onClick={e => e.target === e.currentTarget && skipInfo()}>
       <div className="info-modal">
         <h3><Clipboard size={17} className="gold" /> {t('Delivery Information')}</h3>
-        <p>{t('Ek baar bhar dein — hum save kar lein ge aapki info')}</p>
-        <input type="text" className="modal-input" placeholder={t('Aapka Name (Full Name)')} maxLength={60} value={f.name} onChange={set('name')} />
+        <p>{t('Fill it in once — we will save your information')}</p>
+        <input type="text" className="modal-input" placeholder={t('Your Name (Full Name)')} maxLength={60} value={f.name} onChange={set('name')} />
         <input type="tel" className="modal-input" placeholder={t('Phone Number (03xx-xxxxxxx)')} maxLength={20} value={f.phone} onChange={set('phone')} />
-        <textarea className="modal-input" rows="2" placeholder={t('Delivery Address (ghar, gali, sheher)')} value={f.address} onChange={set('address')} />
+        <textarea className="modal-input" rows="2" placeholder={t('Delivery Address (house, street, city)')} value={f.address} onChange={set('address')} />
         <button className="btn-primary" style={{ width: '100%' }} onClick={() => saveInfo(f.name.trim(), f.phone.trim(), f.address.trim())}><Save size={14} /> {t('Save & Continue')}</button>
         <button className="modal-skip-btn" onClick={skipInfo}>{t('Skip (order without saving)')}</button>
       </div>

@@ -25,7 +25,7 @@ export default function DXNProducts() {
         <div className="prod-grid">
           {status !== 'ready' && (
             <p style={{ gridColumn: '1/-1', textAlign: 'center', opacity: .6, padding: '2rem 0' }}>
-              {status === 'loading' ? t('Loading products...') : t('Products load nahi ho sake. Page refresh karein ya WhatsApp par order karein.')}
+              {status === 'loading' ? t('Loading products...') : t('Could not load products. Please refresh the page or order on WhatsApp.')}
             </p>
           )}
           {status === 'ready' && <>

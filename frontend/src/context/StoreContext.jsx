@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { API, DELIVERY, WA_NUMBER, ORDER_WA_NUMBER, assetUrl } from '../lib/config'
 import Loader from '../components/Loader'
+import { useLang } from './LangContext'
 import snapshot from '../data/snapshot.json'
 
 /* PIN_FIRST: jin products ko Clinic Range mein sab se pehle dikhana hai unki id.
@@ -49,6 +50,7 @@ const Ctx = createContext(null)
 export const useStore = () => useContext(Ctx)
 
 export function StoreProvider({ children }) {
+  const { t } = useLang()
   const [cache] = useState(readStart)
   const [products, setProducts] = useState(cache ? cache.products : [])
   const [status, setStatus] = useState(cache ? 'ready' : 'loading') // loading | ready | error
@@ -83,6 +85,8 @@ export function StoreProvider({ children }) {
   }, [])
 
   const subtotal = cart.reduce((s, i) => s + i.qty * i.price, 0)
+  const dc = settings && settings.deliveryCharge != null ? Number(settings.deliveryCharge) : NaN
+  const delivery = Number.isFinite(dc) && dc >= 0 ? dc : DELIVERY   // admin ne jo set kiya, warna default 199
   const cartCount = cart.reduce((s, i) => s + i.qty, 0)
 
   const addToCart = id => {
@@ -109,7 +113,7 @@ export function StoreProvider({ children }) {
     if (i?.address) m += `*Address:* ${i.address}\n`
     m += line + '*Products:*\n'
     cart.forEach(x => { m += `- ${x.name} x${x.qty} = ${x.price * x.qty} PKR\n` })
-    m += `${line}Subtotal: ${subtotal} PKR\nDelivery: ${DELIVERY} PKR\n*Total: ${subtotal + DELIVERY} PKR*`
+    m += `${line}Subtotal: ${subtotal} PKR\nDelivery: ${delivery} PKR\n*Total: ${subtotal + delivery} PKR*`
     setSending(true)
     await Promise.all([saveOrderToBackend(i, cart), new Promise(r => setTimeout(r, 900))])
     setSending(false)
@@ -118,13 +122,13 @@ export function StoreProvider({ children }) {
   }
 
   const checkout = () => {
-    if (!cart.length) { alert('Cart khali hai — pehle koi product add karein'); return }
+    if (!cart.length) { alert(t('Your cart is empty — please add a product first')); return }
     if (!info?.name || !info?.phone) { setPendingCheckout(true); setInfoOpen(true); return }
     doCheckout(info)
   }
   const openInfoModal = (edit = false) => { setPendingCheckout(!edit); setInfoOpen(true) }
   const saveInfo = (name, phone, address) => {
-    if (!name || !phone) { alert('Name aur Phone number zaroori hain'); return }
+    if (!name || !phone) { alert(t('Name and phone number are required')); return }
     const i = { name, phone, address }
     writeInfo(i); setInfo(i); setInfoOpen(false)
     if (pendingCheckout) { setPendingCheckout(false); doCheckout(i) }
@@ -132,7 +136,7 @@ export function StoreProvider({ children }) {
   const skipInfo = () => { setInfoOpen(false); if (pendingCheckout) { setPendingCheckout(false); doCheckout(info) } }
 
   const value = {
-    products, status, cart, cartCount, subtotal, cartOpen, info, infoOpen, lightbox, settings, sending,
+    products, status, cart, cartCount, subtotal, delivery, cartOpen, info, infoOpen, lightbox, settings, sending,
     addToCart, changeQty, removeItem, checkout, openWA,
     openCart: () => setCartOpen(true), closeCart: () => setCartOpen(false),
     openLightbox: (src, alt, isVideo = false) => setLightbox({ src, alt, isVideo }), closeLightbox: () => setLightbox(null),

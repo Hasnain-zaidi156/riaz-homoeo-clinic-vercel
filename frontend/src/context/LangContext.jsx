@@ -21,6 +21,8 @@ export function LangProvider({ children }) {
   }
   // Product ka naam/detail: Urdu mode mein nameUr/descUr (agar admin mein bhare hon)
   const pick = (p, f) => (lang === 'ur' && (p[f + 'Ur'] || productsUr[p.id]?.[f])) || p[f]
+  // Qeemat: English mein 'PKR 500', Urdu mein '500 روپے'
+  const money = n => (lang === 'ur' ? `${n} ${ur['PKR']}` : `PKR ${n}`)
   const toggle = () => setLang(l => (l === 'ur' ? 'en' : 'ur'))
-  return <Ctx.Provider value={{ lang, t, pick, toggle }}>{children}</Ctx.Provider>
+  return <Ctx.Provider value={{ lang, t, pick, money, toggle }}>{children}</Ctx.Provider>
 }

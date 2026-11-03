@@ -20,7 +20,7 @@ const cleanDesc = txt => String(txt || '')
    Pahunchne par muted chalti hai (loop), bahar jaye to pause. Sirf aik mute/unmute button. */
 export default function FeaturedProduct() {
   const { products, addToCart, openLightbox } = useStore()
-  const { t, pick } = useLang()
+  const { t, pick, money } = useLang()
   const navigate = useNavigate()
   const p = products.find(x => x.id === 1000)
 
@@ -109,7 +109,7 @@ export default function FeaturedProduct() {
             <h2 className="section-title"><Link to={productPath(p)} className="product-link" onClick={e => { if (e.metaKey || e.ctrlKey || e.shiftKey) return; e.preventDefault(); navigate(productPath(p)) }}>{pick(p, 'name')}</Link></h2>
             <div className="divider-line" />
             <ExpandableText className="section-desc" text={cleanDesc(pick(p, 'desc'))} lines={4} />
-            <div className="featured-price">PKR {p.price}<small>{t('+ delivery')}</small></div>
+            <div className="featured-price">{money(p.price)}<small>{t('+ delivery')}</small></div>
             <div className="featured-btns">
               <button className="btn-primary" onClick={() => addToCart(p.id)}><CartPlus size={14} /> {t('Add to Cart')}</button>
               <Link className="btn-outline" to={productPath(p)} onClick={e => { if (e.metaKey || e.ctrlKey || e.shiftKey) return; e.preventDefault(); navigate(productPath(p)) }}>{t('View Details')}</Link>

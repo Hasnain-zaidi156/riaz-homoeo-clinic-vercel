@@ -1,4 +1,6 @@
 require('dotenv').config();
+/* Atlas error "querySrv ECONNREFUSED" fix: ISP/router/VPN ka DNS SRV lookup refuse karta ho to Google + Cloudflare DNS use karo (.env mein DNS_SERVERS se badal sakte ho) */
+try{require('dns').setServers((process.env.DNS_SERVERS||'8.8.8.8,1.1.1.1').split(',').map(x=>x.trim()).filter(Boolean))}catch{}
 const express=require('express'),mongoose=require('mongoose'),jwt=require('jsonwebtoken'),cors=require('cors'),path=require('path');
 if(!process.env.JWT_SECRET){console.error('Set JWT_SECRET in .env');process.exit(1)}
 const app=express();app.set('trust proxy',1);try{app.use(require('compression')())}catch{/* compression install nahi — chalta rahega */}
@@ -12,13 +14,13 @@ const O=mongoose.model('Order',S({name:String,phone:String,address:String,items:
 const A=mongoose.model('Appointment',S({name:String,phone:String,date:String,token:Number,note:String,status:{type:String,default:'booked'}}));
 /* Patient records: sirf admin panel ke liye (website par kahin show nahi hota, public API mein koi route nahi) */
 const PT=mongoose.model('Patient',(()=>{const sc=S({name:{type:String,required:true,trim:true,maxlength:80},cardNo:{type:String,required:true,trim:true,maxlength:40},city:{type:String,required:true,trim:true,maxlength:60}});sc.index({createdAt:-1});sc.index({cardNo:1});sc.index({name:1});sc.index({city:1});return sc})());
-const ST=mongoose.model('Setting',S({site:{type:String,default:'site',unique:true},logoImg:String,doctorLeftImg:String,doctorRightImg:String,doctorAboutImg:String,aboutSeed:Boolean,priceSeed:Boolean,phone1:String,phone2:String,email:String,address:String,aboutText:String,altSeed:Boolean}));
+const ST=mongoose.model('Setting',S({site:{type:String,default:'site',unique:true},logoImg:String,doctorLeftImg:String,doctorRightImg:String,doctorAboutImg:String,aboutSeed:Boolean,priceSeed:Boolean,priceSeed2:Boolean,deliveryCharge:Number,phone1:String,phone2:String,email:String,address:String,aboutText:String,altSeed:Boolean}));
 /* Media library: website gallery + admin uploads. Image ya to external URL (src) hoti hai ya DB mein (data) save hoti hai.
    show=true => website ki Gallery mein nazar aati hai. */
 const MD=mongoose.model('Media',S({name:String,alt:String,src:String,data:Buffer,contentType:String,size:Number,show:{type:Boolean,default:true},pos:{type:Number,default:0}}));
 const mediaUrl=m=>m.src||'/api/media/'+m._id+'/file';
 const mediaOut=m=>({_id:m._id,name:m.name||'',alt:m.alt||'',url:mediaUrl(m),hosted:!m.src,show:m.show!==false,size:m.size||0,createdAt:m.createdAt,isVideo:m.isVideo===true,contentType:m.contentType||''});
-const DELIVERY=500,ah=f=>(q,s,n)=>f(q,s,n).catch(e=>s.status(500).json({error:e.message}));
+const DEFAULT_DELIVERY=199,ah=f=>(q,s,n)=>f(q,s,n).catch(e=>s.status(500).json({error:e.message}));
 const ok=(v,m=200)=>typeof v==='string'&&v.trim()&&v.length<=m;
 const auth=(q,s,n)=>{try{jwt.verify((q.headers.authorization||'').slice(7),process.env.JWT_SECRET);n()}catch{s.status(401).json({error:'Unauthorized'})}};
 
@@ -36,7 +38,10 @@ app.get('/api/media/:id/file',ah(async(q,s)=>{
   s.set({'Content-Type':m.contentType||'image/jpeg','Cache-Control':'public, max-age=31536000, s-maxage=31536000, immutable','Cross-Origin-Resource-Policy':'cross-origin'});
   s.send(m.data);
 }));
-app.get('/api/settings',pub,ah(async(q,s)=>s.json(await ST.findOne({site:'site'})||{site:'site'})));
+/* Delivery charges: admin panel se badalte hain (Setting.deliveryCharge). Set na ho to default 199. */
+const siteOut=d=>{const o=d?(d.toObject?d.toObject():d):{site:'site'};const n=Number(o.deliveryCharge);o.deliveryCharge=o.deliveryCharge!=null&&Number.isFinite(n)&&n>=0?n:DEFAULT_DELIVERY;return o};
+const delCharge=async()=>siteOut(await ST.findOne({site:'site'})).deliveryCharge;
+app.get('/api/settings',pub,ah(async(q,s)=>s.json(siteOut(await ST.findOne({site:'site'})))));
 /* Comments: ab product cards par nahi — website par ek alag (bulk) Comments section hai.
    Comment ka cid=0 => bulk section. Purane product comments DB mein rehte hain, sirf admin dekh/delete kar sakta hai. */
 const CM=mongoose.model('Comment',S({cid:Number,_id:Number,name:String,text:String}));
@@ -58,7 +63,8 @@ app.post('/api/orders',ah(async(q,s)=>{
  for(const i of items){if(!mongoose.isValidObjectId(i._id))continue;const p=await P.findById(i._id);if(p)rows.push({name:p.name,qty:Math.min(99,Math.max(1,parseInt(i.qty)||1)),price:p.price})}
  if(!rows.length)return s.status(400).json({error:'No valid items'});
  const subtotal=rows.reduce((a,r)=>a+r.price*r.qty,0);
- s.json(await O.create({name,phone,address:String(address||'').slice(0,300),items:rows,subtotal,delivery:DELIVERY,total:subtotal+DELIVERY}));
+ const delivery=await delCharge();
+ s.json(await O.create({name,phone,address:String(address||'').slice(0,300),items:rows,subtotal,delivery,total:subtotal+delivery}));
 }));
 
 app.post('/api/appointments',ah(async(q,s)=>{
@@ -112,11 +118,16 @@ r.post('/products',ah(async(q,s)=>{const l=await P.findOne().sort('-id');s.json(
 r.put('/products/:id',ah(async(q,s)=>s.json(await P.findByIdAndUpdate(q.params.id,q.body,{new:true}))));
 r.delete('/products/:id',ah(async(q,s)=>{await P.findByIdAndDelete(q.params.id);s.json({ok:1})}));
 /* Admin: site images (logo / hero / about) — + picker se badli jati hain */
-r.get('/settings',ah(async(q,s)=>s.json(await ST.findOne({site:'site'})||{site:'site'})));
+r.get('/settings',ah(async(q,s)=>s.json(siteOut(await ST.findOne({site:'site'})))));
 r.put('/settings',ah(async(q,s)=>{
   const b=q.body||{},set={};
   ['logoImg','doctorLeftImg','doctorRightImg','doctorAboutImg','phone1','phone2','email','address','aboutText'].forEach(k=>{if(typeof b[k]==='string')set[k]=b[k].trim().slice(0,600)});
-  s.json(await ST.findOneAndUpdate({site:'site'},{$set:set},{upsert:true,new:true,setDefaultsOnInsert:true}));
+  if(b.deliveryCharge!==undefined&&b.deliveryCharge!==null&&b.deliveryCharge!==''){
+    const n=Math.round(Number(b.deliveryCharge));
+    if(!Number.isFinite(n)||n<0||n>100000)return s.status(400).json({error:'Delivery charges 0 se 100000 ke darmiyan hone chahiye'});
+    set.deliveryCharge=n;
+  }
+  s.json(siteOut(await ST.findOneAndUpdate({site:'site'},{$set:set},{upsert:true,new:true,setDefaultsOnInsert:true})));
 }));
 /* Admin: saare comments dekhna / delete karna */
 r.get('/comments',ah(async(q,s)=>{
@@ -161,6 +172,8 @@ function boot(){
  const st=await ST.findOne({site:'site'});
  if(!st||!st.aboutSeed)await ST.findOneAndUpdate({site:'site'},{$set:{doctorAboutImg:'https://i.ibb.co/PZvDc5qS/image.png',phone1:'0333-7189748',phone2:'0312-3875580',email:'riazhomoeoclinic@gmail.com',address:'Dhak Bazar, Rohri, Sindh, Pakistan',aboutSeed:true}},{upsert:true,setDefaultsOnInsert:true});
  if(!st||!st.priceSeed){await P.updateMany({cat:'clinic'},{$set:{price:3500}});await ST.updateOne({site:'site'},{$set:{priceSeed:true}})}
+ /* One-time (v19): jin clinic products ki price abhi standard 3500 hai unhein 3300 kar do. Admin ne jo products alag price par rakhe hain (jaise Power-X, Featured) unhein nahi chheda jata. */
+ if(!st||!st.priceSeed2){await P.updateMany({cat:'clinic',price:3500},{$set:{price:3300}});await ST.findOneAndUpdate({site:'site'},{$set:{priceSeed2:true}},{upsert:true,setDefaultsOnInsert:true})}
  const seed=require('./products.json');
  if(!await P.countDocuments())await P.insertMany(seed);
  else{

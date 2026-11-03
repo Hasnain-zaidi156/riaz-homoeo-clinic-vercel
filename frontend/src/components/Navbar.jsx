@@ -4,6 +4,7 @@ import { useStore } from '../context/StoreContext'
 import { FB_URL, WA_ICON, WA_NUMBER, assetUrl } from '../lib/config'
 import { WhatsApp, Facebook, CartPlus } from './Icons'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { lockSpy, scrollToSection, sectionPath } from '../lib/sections'
 
 const LINKS = [
   ['top', 'Home'],
@@ -22,15 +23,15 @@ export default function Navbar() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
 
-  /* Single page: link click par us section tak smooth scroll (product page se aaye to pehle home) */
+  /* Single page: link click par URL badalta hai (/about, /comments ...) aur us section tak smooth scroll hota hai.
+     Scroll HomePage karta hai; agar URL pehle se wahi hai to yahin scroll kar dete hain. */
   const go = (e, id) => {
-    e.preventDefault(); setOpen(false)
-    const scroll = () => {
-      const el = id === 'top' ? null : document.getElementById(id)
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      else window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-    if (pathname !== '/') { navigate('/'); setTimeout(scroll, 200) } else scroll()
+    e.preventDefault(); setOpen(false); lockSpy()
+    const to = sectionPath(id)
+    const onHome = !pathname.startsWith('/product')
+    if (onHome && window.location.pathname === to) { scrollToSection(id); return }
+    navigate(to)
+    if (!onHome) setTimeout(() => scrollToSection(id, 'auto'), 200) // product page se aaye to home mount hone ke baad
   }
 
   return (
@@ -42,7 +43,7 @@ export default function Navbar() {
         </a>
         <div className="nav-links">
           {LINKS.map(([id, label]) => (
-            <a key={id} href={`/#${id}`} onClick={e => go(e, id)} className="nav-link">{t(label)}</a>
+            <a key={id} href={sectionPath(id)} onClick={e => go(e, id)} className="nav-link">{t(label)}</a>
           ))}
           <a href={FB_URL} target="_blank" rel="noreferrer" className="fb-link"><Facebook size={13} /> {t('Facebook')}</a>
         </div>
@@ -58,7 +59,7 @@ export default function Navbar() {
       </div>
       <div className={`mobile-menu${open ? ' show' : ''}`}>
         {LINKS.map(([id, label]) => (
-          <a key={id} href={`/#${id}`} onClick={e => go(e, id)} className="mobile-link">{t(label)}</a>
+          <a key={id} href={sectionPath(id)} onClick={e => go(e, id)} className="mobile-link">{t(label)}</a>
         ))}
         <a href={`https://wa.me/${WA_NUMBER}`} target="_blank" rel="noreferrer"><WhatsApp size={16} color="#25D366" /> {t('WhatsApp Order')}</a>
         <a href={FB_URL} target="_blank" rel="noreferrer"><Facebook size={16} color="#8db4ff" /> {t('Facebook')}</a>

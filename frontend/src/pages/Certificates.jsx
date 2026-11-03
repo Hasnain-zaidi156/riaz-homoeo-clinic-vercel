@@ -28,7 +28,7 @@ export default function Certificates() {
       <div className="container" style={{ textAlign: 'center' }}>
         <div className="badge">{t('Moments')}</div>
         <h2 className="section-title">{t('Certificates & Registrations')}</h2>
-        <p className="section-desc" style={{ maxWidth: '600px', margin: '0 auto 2rem' }}>{t('Doctor ke degrees aur registration certificates.')}</p>
+        <p className="section-desc" style={{ maxWidth: '600px', margin: '0 auto 2rem' }}>{t("Doctor's degrees and registration certificates.")}</p>
         {certs.length === 0 ? (
           <p style={{ color: 'rgba(255,255,255,.6)', fontSize: '1rem' }}>{t('No certificates available yet.')}</p>
         ) : (

@@ -1,9 +1,10 @@
 import { useMemo, useRef } from 'react'
 import { Modal } from './ui'
+import { DELIVERY } from '../../lib/config'
 
 /* Order ki A4 raseed. Preview aur print dono ek hi HTML se bante hain (iframe).
-   Delivery hamesha 500 PKR. */
-export const RECEIPT_DELIVERY = 500
+   Delivery: har order par wohi jo order ke waqt save hui thi (admin ne jo rate rakha tha); na ho to default. */
+export const orderDelivery = o => { const n = Number(o && o.delivery); return o && o.delivery != null && Number.isFinite(n) && n >= 0 ? n : DELIVERY }
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
 const pkr = n => 'PKR ' + Number(n || 0).toLocaleString('en-US')
 const fmtDate = d => { try { return new Date(d).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }) } catch { return '' } }
@@ -11,7 +12,8 @@ const fmtDate = d => { try { return new Date(d).toLocaleString('en-GB', { day: '
 export function receiptHtml(o) {
   const items = (o.items || []).map(i => ({ ...i, qty: Number(i.qty) || 1, price: Number(i.price) || 0 }))
   const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0)
-  const total = subtotal + RECEIPT_DELIVERY
+  const delivery = orderDelivery(o)
+  const total = subtotal + delivery
   const no = 'RHC-' + String(o._id || '').slice(-6).toUpperCase()
   const rows = items.map((i, k) => `<tr><td class="c">${k + 1}</td><td>${esc(i.name)}</td><td class="c">${i.qty}</td><td class="r">${pkr(i.price)}</td><td class="r">${pkr(i.price * i.qty)}</td></tr>`).join('')
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Receipt ${no}</title>
@@ -45,6 +47,7 @@ thead th.c{text-align:center}thead th.r{text-align:right}
 .pay{margin-top:9mm;border:1px dashed #b9c4ce;border-radius:6px;padding:4mm 5mm;font-size:12px;line-height:1.6;color:#33424f}
 .foot{position:absolute;left:16mm;right:16mm;bottom:12mm;text-align:center;font-size:11px;color:#6a7a88;border-top:1px solid #d6dde4;padding-top:4mm}
 .foot b{color:#0f5f4a;font-size:12.5px}
+@media screen and (max-width:720px){.page{width:100%;min-height:0;padding:20px 14px 24px}.head,.meta{flex-direction:column;gap:12px}.rcpt{text-align:left}.totals{width:100%}.foot{position:static;margin-top:18px}.pay{margin-top:18px}table{font-size:12px}td,thead th{padding:6px 5px}.c{width:30px}}
 @media print{html,body{background:#fff}.page{margin:0;box-shadow:none}}
 </style></head><body><div class="page">
 <div class="head">
@@ -58,7 +61,7 @@ thead th.c{text-align:center}thead th.r{text-align:right}
 <table><thead><tr><th class="c">#</th><th>Product</th><th class="c">Qty</th><th class="r">Price</th><th class="r">Amount</th></tr></thead><tbody>${rows}</tbody></table>
 <div class="totals">
   <div><span>Sub Total</span><span>${pkr(subtotal)}</span></div>
-  <div><span>Delivery Charges</span><span>${pkr(RECEIPT_DELIVERY)}</span></div>
+  <div><span>Delivery Charges</span><span>${pkr(delivery)}</span></div>
   <div class="grand"><span>Total</span><span>${pkr(total)}</span></div>
 </div>
 <div class="pay"><b>Payment:</b> Online Payment — Easypaisa (0333-7189748)<br>Please send the payment screenshot on WhatsApp 0312-3875580 to confirm your order.</div>

@@ -642,3 +642,7 @@ html[dir=rtl] .about-sub{font-family:var(--ur-head);font-size:1.5rem;line-height
 
 /* Gallery video badge */
 .gallery-video-badge{position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.6);color:#fff;padding:4px 8px;border-radius:4px;font-size:0.7rem;backdrop-filter:blur(4px);z-index:5}
+/* Comments: koi comment na ho to form beech mein */
+.cm-grid.solo{grid-template-columns:minmax(0,560px);justify-content:center}
+.cm-grid.solo .cm-form{position:static}
+.cm-form h3{text-align:center}

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
-import { assetUrl } from '../../lib/config'
+import { assetUrl, DELIVERY } from '../../lib/config'
 import { Bag, Comment, ImageIcon, Package, Plus, Search, Trash, Eye, EyeOff } from '../../components/Icons'
-import Receipt, { RECEIPT_DELIVERY } from './Receipt'
+import Receipt, { orderDelivery } from './Receipt'
 import { Badge, Empty, Loading, Switch, money, niceDate, useConfirm, useToast } from './ui'
 
 const ORDER_STATUS = ['new', 'confirmed', 'delivered', 'cancelled']
@@ -54,7 +54,7 @@ export function Overview({ d, go, addImages }) {
         <div className="adm-card wide">
           <div className="adm-card-head"><h3>Latest orders</h3><button className="adm-link" onClick={() => go('orders')}>View all</button></div>
           {d.orders.length === 0 ? <p className="adm-muted pad">No orders yet.</p> : (
-            <div className="adm-scroll"><table className="adm-table compact"><tbody>
+            <div className="adm-scroll"><table className="adm-table compact mini"><tbody>
               {d.orders.slice(0, 6).map(o => (
                 <tr key={o._id}>
                   <td><b>{o.name}</b><small>{niceDate(o.createdAt || '')}</small></td>
@@ -78,8 +78,41 @@ export function Overview({ d, go, addImages }) {
   )
 }
 
+/* ================= Delivery charges (admin yahan se change karta hai — website, cart aur nayi orders par lagta hai) ================= */
+export function DeliveryCharge({ site, api, setSite }) {
+  const toast = useToast()
+  const cur = site && site.deliveryCharge != null ? site.deliveryCharge : DELIVERY
+  const [val, setVal] = useState(String(cur)), [busy, setBusy] = useState(false)
+  useEffect(() => { setVal(String(cur)) }, [cur])
+  const dirty = val.trim() !== '' && Number(val) !== Number(cur)
+  const save = async e => {
+    e.preventDefault()
+    const n = Number(val)
+    if (val.trim() === '' || !Number.isFinite(n) || n < 0) { toast('Enter a valid amount (0 or more)', 'err'); return }
+    setBusy(true)
+    try {
+      const r = await api('admin/settings', 'PUT', { deliveryCharge: Math.round(n) })
+      if (r.error) throw new Error(r.error)
+      setSite(r); toast('Delivery charges updated')
+    } catch { toast('Could not update delivery charges', 'err') }
+    setBusy(false)
+  }
+  return (
+    <div className="adm-card" style={{ marginBottom: '1rem' }}>
+      <div className="adm-card-head"><h3>Delivery charges</h3><span className="adm-muted">Applies to the cart, new orders and receipts. Past orders keep the charge they were placed with.</span></div>
+      <form onSubmit={save} style={{ display: 'flex', alignItems: 'flex-end', gap: '.75rem', flexWrap: 'wrap', padding: '1rem 1.25rem' }}>
+        <label className="adm-label" style={{ maxWidth: 220 }}>Charge per order (PKR)
+          <input className="adm-input" type="number" min="0" step="1" inputMode="numeric" value={val} onChange={e => setVal(e.target.value)} />
+        </label>
+        <button className="adm-btn primary" disabled={busy || !dirty}>{busy ? 'Saving…' : 'Save'}</button>
+        <span className="adm-muted">Current: <b>{money(cur)}</b></span>
+      </form>
+    </div>
+  )
+}
+
 /* ================= Orders ================= */
-export function Orders({ d, api, patch }) {
+export function Orders({ d, api, patch, site, setSite }) {
   const toast = useToast()
   const [f, setF] = useState('all'), [q, setQ] = useState(''), [rc, setRc] = useState(null)
   const rows = d.orders
@@ -92,26 +125,29 @@ export function Orders({ d, api, patch }) {
     catch { patch('orders', o._id, { status: o.status }); toast('Could not update the order', 'err') }
   }
   return (
+    <>
+    <DeliveryCharge site={site} api={api} setSite={setSite} />
     <div className="adm-card">
       <div className="adm-toolbar">
         <Chips value={f} onChange={setF} options={[['all', 'All', rows.length], ...ORDER_STATUS.map(s => [s, cap(s), rows.filter(o => o.status === s).length])]} />
         <SearchBox value={q} onChange={setQ} placeholder="Search name, phone, address" />
       </div>
       {shown.length === 0 ? <Empty icon={<Bag size={22} />} title="No orders found" text={rows.length ? 'Try another filter.' : 'Orders placed on the website will appear here.'} /> : (
-        <div className="adm-scroll"><table className="adm-table">
+        <div className="adm-scroll"><table className="adm-table stack">
           <thead><tr><th>Date</th><th>Customer</th><th>Items</th><th className="num">Total</th><th>Status</th><th>Receipt</th></tr></thead>
           <tbody>{shown.map(o => (
             <tr key={o._id} className="adm-row-click" onClick={() => setRc(o)} title="Click to view receipt">
-              <td className="nowrap">{niceDate(o.createdAt || '')}</td>
-              <td><b>{o.name}</b><small><a href={`tel:${o.phone}`} onClick={e => e.stopPropagation()}>{o.phone}</a></small>{o.address && <small>{o.address}</small>}</td>
-              <td>{o.items.map((i, k) => <div key={k} className="adm-item-line">{i.name} <span>× {i.qty}</span></div>)}</td>
-              <td className="num nowrap"><b>{money((o.items || []).reduce((s, i) => s + (i.price || 0) * (i.qty || 1), 0) + RECEIPT_DELIVERY)}</b></td>
-              <td onClick={e => e.stopPropagation()}><StatusSelect value={o.status} options={ORDER_STATUS} onChange={s => setStatus(o, s)} /></td>
-              <td><button type="button" className="adm-btn" onClick={e => { e.stopPropagation(); setRc(o) }}>Receipt</button></td>
+              <td className="nowrap" data-label="Date">{niceDate(o.createdAt || '')}</td>
+              <td data-label="Customer"><b>{o.name}</b><small><a href={`tel:${o.phone}`} onClick={e => e.stopPropagation()}>{o.phone}</a></small>{o.address && <small>{o.address}</small>}</td>
+              <td data-label="Items">{o.items.map((i, k) => <div key={k} className="adm-item-line">{i.name} <span>× {i.qty}</span></div>)}</td>
+              <td className="num nowrap" data-label="Total"><b>{money((o.items || []).reduce((s, i) => s + (i.price || 0) * (i.qty || 1), 0) + orderDelivery(o))}</b></td>
+              <td data-label="Status" onClick={e => e.stopPropagation()}><StatusSelect value={o.status} options={ORDER_STATUS} onChange={s => setStatus(o, s)} /></td>
+              <td data-label="Receipt"><button type="button" className="adm-btn" onClick={e => { e.stopPropagation(); setRc(o) }}>Receipt</button></td>
             </tr>))}</tbody>
         </table></div>)}
       {rc && <Receipt order={rc} onClose={() => setRc(null)} />}
     </div>
+    </>
   )
 }
 

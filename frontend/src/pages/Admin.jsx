@@ -71,6 +71,15 @@ function Panel({ token, logout }) {
   useEffect(() => { document.title = 'Admin · Riaz Homoeo Clinic'; return () => { document.title = 'Riaz Homoeo Clinic' } }, [])
   useEffect(() => { const h = () => setTab(location.hash.slice(1) || 'overview'); addEventListener('hashchange', h); return () => removeEventListener('hashchange', h) }, [])
 
+  useEffect(() => {
+    if (!nav) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const k = e => e.key === 'Escape' && setNav(false)
+    addEventListener('keydown', k)
+    return () => { document.body.style.overflow = prev; removeEventListener('keydown', k) }
+  }, [nav])
+
   const go = t => { location.hash = t; setTab(t); setNav(false); scrollTo(0, 0) }
   const patch = (k, id, p) => setD(s => ({ ...s, [k]: s[k].map(r => r._id === id ? { ...r, ...p } : r) }))
   const patchMedia = (id, p) => patch('media', id, p)
@@ -102,7 +111,7 @@ function Panel({ token, logout }) {
         </header>
         <div className="adm-content">
           {tab === 'overview' && <Overview d={d} go={go} addImages={addImages} />}
-          {tab === 'orders' && <Orders {...common} />}
+          {tab === 'orders' && <Orders {...common} site={site} setSite={setSite} />}
           {tab === 'products' && <Products {...common} />}
           {tab === 'comments' && <Comments {...common} />}
           {tab === 'patients' && <Patients api={api} />}

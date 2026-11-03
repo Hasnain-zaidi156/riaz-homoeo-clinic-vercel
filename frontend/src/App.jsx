@@ -18,7 +18,6 @@ export default function App() {
         <Navbar />
         <main>
           <Routes>
-            <Route path="/" element={<HomePage />} />
             <Route path="/product/:id" element={<ProductPage />} />
             <Route path="*" element={<HomePage />} />
           </Routes>

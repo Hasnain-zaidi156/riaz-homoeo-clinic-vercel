@@ -1,8 +1,9 @@
 import { createPortal } from 'react-dom'
 import { useEffect, useRef, useState } from 'react'
 import { useLang } from '../context/LangContext'
+import { rich } from '../lib/richText'
 import { useStore } from '../context/StoreContext'
-import { DELIVERY, WA_ICON, WA_NUMBER } from '../lib/config'
+import { WA_ICON, WA_NUMBER } from '../lib/config'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import ProductCard from './ProductCard'
 import { CartPlus, ChevronLeft, Expand } from './Icons'
@@ -13,8 +14,8 @@ import { CartPlus, ChevronLeft, Expand } from './Icons'
 export default function ProductPage() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { products, status, addToCart, openCart, cartCount, openLightbox, lightbox, cartOpen } = useStore()
-  const { t, pick } = useLang()
+  const { products, status, delivery, addToCart, openCart, cartCount, openLightbox, lightbox, cartOpen } = useStore()
+  const { t, pick, money } = useLang()
   const [idx, setIdx] = useState(0)
   const scroller = useRef(null)
   /* URL: /product/65-power-x-neuro-drops => sirf shuru ka number (id) lo, slug ignore */
@@ -60,7 +61,7 @@ export default function ProductPage() {
       </header>
 
       <div className="container pd-wrap">
-        {status !== 'ready' && <p className="pd-msg">{status === 'loading' ? t('Loading products...') : t('Products load nahi ho sake. Page refresh karein ya WhatsApp par order karein.')}</p>}
+        {status !== 'ready' && <p className="pd-msg">{status === 'loading' ? t('Loading products...') : t('Could not load products. Please refresh the page or order on WhatsApp.')}</p>}
 
         {status === 'ready' && !p && (
           <div className="pd-msg">
@@ -96,18 +97,18 @@ export default function ProductPage() {
             <div className="pd-info">
               <div className="badge">{catLabel}</div>
               <h1 className="pd-title">{pick(p, 'name')}</h1>
-              <div className="pd-price">PKR {p.price}<small>{t('+ delivery')}</small></div>
+              <div className="pd-price">{money(p.price)}<small>{t('+ delivery')}</small></div>
               <span className={`pd-stock ${inStock ? 'in' : 'out'}`}>{inStock ? t('IN STOCK') : t('OUT OF STOCK')}</span>
               <div className="divider-line" />
 
               <h3 className="pd-h">{t('Description')}</h3>
-              <p className="pd-desc">{pick(p, 'desc')}</p>
+              <p className="pd-desc">{rich(pick(p, 'desc'))}</p>
 
               <dl className="pd-specs">
                 <div><dt>{t('Category')}</dt><dd>{catLabel}</dd></div>
                 <div><dt>{t('Availability')}</dt><dd>{inStock ? t('In Stock') : t('Out of Stock')}</dd></div>
                 <div><dt>{t('Product ID')}</dt><dd>#{p.id}</dd></div>
-                <div><dt>{t('Delivery Charges')}</dt><dd>PKR {DELIVERY}</dd></div>
+                <div><dt>{t('Delivery Charges')}</dt><dd>{money(delivery)}</dd></div>
               </dl>
 
               <div className="featured-btns">

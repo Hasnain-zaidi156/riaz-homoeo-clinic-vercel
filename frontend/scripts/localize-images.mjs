@@ -107,7 +107,7 @@ async function main() {
   const list = [...keys]
   const todo = list.filter(k => !(map[k] && fs.existsSync(path.join(ROOT, 'public', map[k]))))
   log(`${list.length} images, ${list.length - todo.length} pehle se code mein, ${todo.length} nayi`)
-  let ok = 0, fail = 0, bytesIn = 0, bytesOut = 0
+  let ok = 0, fail = 0, bytesIn = 0, bytesOut = 0, dbMissing = 0
   const worker = async () => {
     while (todo.length) {
       const key = todo.shift()
@@ -116,7 +116,7 @@ async function main() {
       for (let t = 0; t < 3 && !done; t++) {
         try {
           const r = await fetch(url, { signal: AbortSignal.timeout(45000) })
-          if (!r.ok) throw new Error('HTTP ' + r.status)
+          if (!r.ok) { const er = new Error('HTTP ' + r.status); er.status = r.status; throw er }
           const ct = r.headers.get('content-type') || ''
           if (!/^image\//.test(ct) || /gif|svg/.test(ct)) throw new Error('skip type ' + ct)
           const buf = Buffer.from(await r.arrayBuffer())
@@ -126,7 +126,12 @@ async function main() {
           map[key] = '/img/' + name
           bytesIn += buf.length; bytesOut += out.length; ok++; done = true
         } catch (e) {
-          if (t === 2) { fail++; log('skip:', key.slice(0, 80), '-', e.message) } else await sleep(1500)
+          /* 404 = image us server ke database mein hai hi nahi — dobara try karna bekaar, seedha skip */
+          if (t === 2 || e.status === 404 || e.status === 410) {
+            fail++; done = true
+            if (e.status === 404 && key.startsWith('/api/media/')) dbMissing++
+            log('skip:', key.slice(0, 80), '-', e.message)
+          } else await sleep(1500)
         }
       }
     }
@@ -134,6 +139,11 @@ async function main() {
   await Promise.all(Array.from({ length: 4 }, worker))
   if (ok) log(`${ok} images optimize hui: ${(bytesIn / 1048576).toFixed(1)} MB -> ${(bytesOut / 1048576).toFixed(1)} MB`)
   if (fail) log(`${fail} images download nahi hui (wo purane tareeqe se hi load hongi)`)
+  if (dbMissing) {
+    log(`NOTE: ${dbMissing} admin-uploaded images ko ${API} ne 404 diya — ye us server ke database mein maujood nahi.`)
+    log('  Check: 1) browser mein ' + API + '/api/media/<id>/file kholein.  2) VITE_API_BASE (.env) wahi backend ho jis se admin panel chalta hai (localhost nahi, agar images live site se upload hui hain).')
+    log('  3) Admin > Media mein wo image maujood hai ya delete ho chuki hai? Delete ho chuki ho to product mein nayi image lagayein.')
+  }
 
   /* 4) Map likhein (sirf wahi jin ki file maujood hai) */
   const clean = {}

@@ -105,15 +105,15 @@ export default function Patients({ api }) {
           text={q.trim() ? 'Naam, card number ya city kuch aur likh kar dekhein.' : 'Add patient dabayen — name, card number aur city save ho jayegi.'} />
       ) : (
         <>
-          <div className="adm-scroll"><table className="adm-table compact">
+          <div className="adm-scroll"><table className="adm-table compact stack">
             <thead><tr><th>Name</th><th>Card number</th><th>City</th><th>Added</th><th /></tr></thead>
             <tbody>{rows.map(p => (
               <tr key={p._id}>
-                <td><b>{p.name}</b></td>
-                <td className="nowrap">{p.cardNo}</td>
-                <td>{p.city}</td>
-                <td className="nowrap adm-muted">{niceDate(p.createdAt || '')}</td>
-                <td className="nowrap" style={{ textAlign: 'end' }}>
+                <td data-label=""><b>{p.name}</b></td>
+                <td className="nowrap" data-label="Card number">{p.cardNo}</td>
+                <td data-label="City">{p.city}</td>
+                <td className="nowrap adm-muted" data-label="Added">{niceDate(p.createdAt || '')}</td>
+                <td className="nowrap adm-row-actions" data-label="" style={{ textAlign: 'end' }}>
                   <button type="button" className="adm-icon-btn" onClick={() => setForm(p)} aria-label={`Edit ${p.name}`} title="Edit"><Pencil size={16} /></button>
                   <button type="button" className="adm-icon-btn" onClick={() => remove(p)} aria-label={`Delete ${p.name}`} title="Delete"><Trash size={16} /></button>
                 </td>

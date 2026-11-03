@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useLang } from '../context/LangContext'
+import { rich } from '../lib/richText'
 
 /* Text max `lines` lines dikhata hai. Zyada ho to "See More" aata hai, kam ho to nahi.
    Overflow DOM se measure hota hai (width/font/language badalne par bhi theek) —
@@ -31,7 +32,7 @@ export default function ExpandableText({ text, lines = 4, className = '' }) {
   if (!text) return null
   return (
     <div className="expandable">
-      <p ref={ref} className={`${className} clamp-text${open ? ' open' : ''}`} style={{ '--lines': lines }}>{text}</p>
+      <p ref={ref} className={`${className} clamp-text${open ? ' open' : ''}`} style={{ '--lines': lines }}>{rich(text)}</p>
       {overflow && (
         <button type="button" className="see-more-link" aria-expanded={open} onClick={e => { e.stopPropagation(); setOpen(o => !o) }}>
           {open ? t('See Less') : t('See More')}

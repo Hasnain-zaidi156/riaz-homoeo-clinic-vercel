@@ -13,7 +13,7 @@ export default function Footer() {
         </div>
         <div style={{ textAlign: 'center', fontSize: '.72rem', color: 'rgba(255,255,255,.5)' }}>
           {t('© 2026 Riaz Homoeo Clinic · Dr. Syed Fawad Ahmed Zaidi')}<br />
-          <a href="https://hasnain-zaidi.netlify.app/" target="_blank" rel="noreferrer" style={{ color: 'var(--gold)', fontSize: '.65rem' }}>Hasnain Zaidi</a>
+          <a href="https://hasnain-zaidi.netlify.app/" target="_blank" rel="noreferrer" style={{ color: 'var(--gold)', fontSize: '.65rem' }}>{t('Hasnain Zaidi')}</a>
         </div>
         <div className="footer-social">
           <a href={`https://wa.me/${WA_NUMBER}`} target="_blank" rel="noreferrer" className="wa" aria-label="WhatsApp"><WhatsApp size={18} /></a>

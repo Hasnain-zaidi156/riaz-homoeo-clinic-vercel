@@ -95,16 +95,16 @@ export default function Products({ d, api, patch, reload }) {
         <button className="adm-btn primary" onClick={() => setEdit('new')}><Plus size={16} /> Add product</button>
       </div>
       {shown.length === 0 ? <Empty icon={<Package size={22} />} title="No products found" text={rows.length ? 'Try another search.' : 'Add your first product.'} /> : (
-        <div className="adm-scroll"><table className="adm-table">
+        <div className="adm-scroll"><table className="adm-table stack">
           <thead><tr><th>Product</th><th>Category</th><th className="num">Price</th><th>Stock</th><th aria-label="Actions" /></tr></thead>
           <tbody>{shown.map(p => (
             <tr key={p._id}>
-              <td><div className="adm-prod"><img src={assetUrl(imgsOf(p)[0]) || ''} alt="" onError={e => { e.currentTarget.style.visibility = 'hidden' }} />
+              <td data-label=""><div className="adm-prod"><img src={assetUrl(imgsOf(p)[0]) || ''} alt="" onError={e => { e.currentTarget.style.visibility = 'hidden' }} />
                 <div><b>{p.name}</b>{p.nameUr && <small dir="rtl">{p.nameUr}</small>}</div></div></td>
-              <td><Badge tone={p.cat === 'dxn' ? 'warn' : 'info'}>{p.cat === 'dxn' ? 'DXN' : 'Clinic'}</Badge></td>
-              <td className="num nowrap">{money(p.price)}</td>
-              <td><Switch checked={p.stock !== false} onChange={v => setStock(p, v)} label={p.stock !== false ? 'In stock' : 'Out'} /></td>
-              <td className="adm-row-actions">
+              <td data-label="Category"><Badge tone={p.cat === 'dxn' ? 'warn' : 'info'}>{p.cat === 'dxn' ? 'DXN' : 'Clinic'}</Badge></td>
+              <td className="num nowrap" data-label="Price">{money(p.price)}</td>
+              <td data-label="Stock"><Switch checked={p.stock !== false} onChange={v => setStock(p, v)} label={p.stock !== false ? 'In stock' : 'Out'} /></td>
+              <td className="adm-row-actions" data-label="">
                 <button className="adm-icon-btn" onClick={() => setEdit(p)} aria-label={`Edit ${p.name}`}><Pencil size={16} /></button>
                 <button className="adm-icon-btn danger" onClick={() => del(p)} aria-label={`Delete ${p.name}`}><Trash size={16} /></button>
               </td>

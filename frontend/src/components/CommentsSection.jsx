@@ -43,7 +43,7 @@ export default function CommentsSection() {
       <div className="container" style={{ textAlign: 'center' }}>
         <div className="badge"><Comment size={14} /> {t('Comments')}</div>
         <h2 className="section-title">{t('Customer Comments')}</h2>
-        <div className="cm-grid">
+        <div className={`cm-grid${items && items.length ? '' : ' solo'}`}>
           <form className="cm-form glass" onSubmit={send}>
             <h3>{t('Share your experience')}</h3>
             <input className="input-field" value={name} onChange={e => setName(e.target.value)} placeholder={t('Your name')} maxLength={40} />
@@ -51,16 +51,14 @@ export default function CommentsSection() {
             {err && <small className="cm-err">{err}</small>}
             <button className="btn-primary" disabled={busy} style={{ width: '100%', marginTop: '.4rem' }}>{busy ? t('Sending...') : t('Send')}</button>
           </form>
-          <div className="cm-list">
-            {items === null && <p className="cm-msg">{t('Loading...')}</p>}
-            {items !== null && items.length === 0 && <p className="cm-msg">{t('Be the first to comment')}</p>}
-            {(items || []).map(c => (
+          {items && items.length > 0 && <div className="cm-list">
+            {items.map(c => (
               <article key={c._id} className="cm-item glass">
                 <header><b className="cm-name">{c.name}</b><time>{fmt(c.createdAt)}</time></header>
                 <p className="cm-text">{c.text}</p>
               </article>
             ))}
-          </div>
+          </div>}
         </div>
       </div>
     </section>
